@@ -1,20 +1,21 @@
-export default function ProgressBar({ progress = 0, label = "" }) {
-  const safeProgress = Math.min(100, Math.max(0, progress));
+export default function ProgressBar({ percentage = 0 }) {
+  const safePercentage = Math.min(100, Math.max(0, percentage));
+
   return (
     <div className="w-full">
-      {label && (
-        <div className="flex justify-between text-xs font-semibold text-slate-600 mb-1">
-          <span>{label}</span>
-          <span>{safeProgress}%</span>
-        </div>
-      )}
-      <div className="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
+      <div className="mb-2 flex items-center justify-between text-xs">
+        <span className="font-medium text-slate-600">Progress</span>
+        <span className="font-semibold text-slate-900">{safePercentage}%</span>
+      </div>
+
+      <div className="h-2.5 overflow-hidden rounded-full bg-slate-200">
         <div
-          className="bg-indigo-600 h-2.5 rounded-full transition-all duration-300"
-          style={{ width: `${safeProgress}%` }}
+          className="h-full rounded-full bg-slate-900 transition-all duration-500 ease-out"
+          style={{
+            width: `${safePercentage}%`,
+          }}
         />
       </div>
     </div>
   );
 }
-
