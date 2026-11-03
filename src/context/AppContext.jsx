@@ -66,6 +66,27 @@ export const AppProvider = ({ children }) => {
     setCurrentUser(null);
   };
 
+  const submitAssignment = (assignmentId, studentId) => {
+    setAssignments((prevAssignments) => {
+      const updatedAssignments = prevAssignments.map((assignment) => {
+        if (assignment.id !== assignmentId) {
+          return assignment;
+        }
+
+        return {
+          ...assignment,
+          submissions: {
+            ...assignment.submissions,
+            [studentId]: "submitted",
+          },
+        };
+      });
+
+      saveAssignments(updatedAssignments);
+      return updatedAssignments;
+    });
+  };
+
   const updateAssignments = (updatedAssignments) => {
     setAssignments(updatedAssignments);
     saveAssignments(updatedAssignments);
@@ -100,6 +121,7 @@ export const AppProvider = ({ children }) => {
 
         login,
         logout,
+        submitAssignment,
 
         updateAssignments,
         updateUsers,

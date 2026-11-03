@@ -1,127 +1,225 @@
-import { useNavigate, useParams, Link } from "react-router-dom";
-import { ArrowLeft, CalendarDays, ExternalLink } from "lucide-react";
+import { useMemo, useState } from "react";
+import { ArrowLeft, ExternalLink, CheckCircle2, CalendarDays, ShieldAlert } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
+
+import DashboardLayout from "../components/layout/DashboardLayout";
+import Badge from "../components/common/Badge";
+import SubmissionDialog from "../components/student/SubmissionDialog";
 
 import { useApp } from "../context/AppContext";
-import Badge from "../components/common/Badge";
-import { formatDate, isOverdue } from "../utils/helpers";
+import { isOverdue, formatDate } from "../utils/helpers";
 
 export default function AssignmentDetails() {
   const { id } = useParams();
-  const { currentUser, assignments } = useApp();
   const navigate = useNavigate();
 
-  const assignment = assignments.find((item) => item.id === id);
+  const { assignments, currentUser, submitAssignment } = useApp();
+
+  const [showDialog, setShowDialog] = useState(false);
+
+  const assignment = useMemo(() => {
+    const foundAssignment = assignments.find((item) => item.id === id);
+
+    if (!foundAssignment || !currentUser) {
+      return null;
+    }
+
+    // Role-based access check: Students can only view assignments allocated to them
+    if (currentUser.role === "student") {
+      const isAssigned = foundAssignment.assignedTo?.includes(currentUser.id);
+      if (!isAssigned) {
+        return null;
+      }
+    }
+
+    return foundAssignment;
+  }, [assignments, id, currentUser]);
 
   if (!assignment) {
     return (
-      <div className="min-h-screen bg-slate-50 p-6 flex items-center justify-center">
-        <div className="max-w-md w-full rounded-2xl bg-white p-8 text-center border border-slate-200 shadow-sm">
-          <h1 className="text-xl font-bold text-slate-900">
-            Assignment Not Found
-          </h1>
-          <p className="mt-2 text-sm text-slate-500">
-            The assignment you are looking for does not exist or has been removed.
-          </p>
-          <button
-            onClick={() =>
-              navigate(currentUser?.role === "admin" ? "/admin" : "/student")
-            }
-            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 cursor-pointer"
-          >
-            <ArrowLeft size={16} />
-            Back to Dashboard
-          </button>
+      <DashboardLayout>
+        <div className="flex min-h-[60vh] items-center justify-center px-4">
+          <div className="max-w-md w-full text-center bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-50 text-amber-600">
+              <ShieldAlert className="h-7 w-7" />
+            </div>
+
+            <h2 className="text-xl font-bold text-slate-900 tracking-tight">
+              Assignment Unavailable
+            </h2>
+
+            <p className="mt-2 text-sm text-slate-500">
+              You do not have permission to view this assignment or it has not been allocated to your account.
+            </p>
+
+            <button
+              onClick={() => navigate(currentUser?.role === "admin" ? "/admin" : "/student")}
+              className="mt-6 inline-flex items-center gap-2 rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition cursor-pointer shadow-sm active:scale-95"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              <span>Back to Dashboard</span>
+            </button>
+          </div>
         </div>
-      </div>
+      </DashboardLayout>
     );
   }
 
   const studentStatus =
     assignment.submissions?.[currentUser?.id] || "pending";
+
   const overdue =
     studentStatus === "pending" && isOverdue(assignment.dueDate);
+
   const displayStatus = overdue ? "overdue" : studentStatus;
 
+  const handleConfirmSubmission = () => {
+    submitAssignment(assignment.id, currentUser.id);
+    setShowDialog(false);
+  };
+
   return (
-    <div className="min-h-screen bg-slate-50 p-6">
+    <DashboardLayout>
       <div className="mx-auto max-w-4xl space-y-6">
+        {/* Navigation Breadcrumb */}
         <div>
-          <Link
-            to={currentUser?.role === "admin" ? "/admin" : "/student"}
-            className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-slate-900 transition mb-4 cursor-pointer"
+          <button
+            onClick={() => navigate(currentUser?.role === "admin" ? "/admin" : "/student")}
+            className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-slate-900 transition cursor-pointer"
           >
-            <ArrowLeft size={16} />
-            Back to Dashboard
-          </Link>
+            <ArrowLeft className="h-4 w-4" />
+            <span>Back to Assignments</span>
+          </button>
         </div>
 
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 border-b border-slate-100 pb-6">
-            <div>
-              <span className="inline-block px-2.5 py-0.5 bg-slate-100 text-slate-700 text-xs font-semibold rounded-full mb-2">
-                Assignment View
-              </span>
-              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
-                {assignment.title}
-              </h1>
+        {/* Main Card */}
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+          {/* Header */}
+          <div className="border-b border-slate-100 p-6 sm:p-8 bg-slate-50/50">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-indigo-600">
+                  Assignment Overview
+                </p>
+
+                <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+                  {assignment.title}
+                </h1>
+              </div>
+
+              {currentUser?.role === "student" && (
+                <div className="self-start sm:self-auto">
+                  <Badge status={displayStatus} />
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Content Body */}
+          <div className="space-y-6 p-6 sm:p-8">
+            {/* Description */}
+            <section>
+              <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                Description & Instructions
+              </h2>
+
+              <p className="leading-7 text-slate-700 text-sm sm:text-base whitespace-pre-line">
+                {assignment.description}
+              </p>
+            </section>
+
+            {/* Metadata Grid */}
+            <div className="grid gap-4 sm:grid-cols-2 pt-2">
+              <div className="rounded-xl bg-slate-50 p-4 border border-slate-100">
+                <div className="flex items-center gap-2 text-xs font-medium text-slate-500 mb-1">
+                  <CalendarDays size={15} />
+                  <span>Due Date</span>
+                </div>
+                <p className="font-bold text-slate-900 text-sm">
+                  {formatDate(assignment.dueDate)}
+                </p>
+
+                {overdue && (
+                  <p className="mt-1 text-xs font-semibold text-rose-600">
+                    ⚠️ This assignment is overdue, but you can still submit.
+                  </p>
+                )}
+              </div>
+
+              <div className="rounded-xl bg-slate-50 p-4 border border-slate-100 flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-medium text-slate-500 mb-1">
+                    Resource / Project Drive
+                  </p>
+                  <p className="font-semibold text-slate-900 text-sm">
+                    Google Drive Link
+                  </p>
+                </div>
+
+                <a
+                  href={assignment.driveLink}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-slate-900 px-3.5 py-2 text-xs font-semibold text-white transition hover:bg-slate-800 cursor-pointer shadow-sm"
+                >
+                  <span>Open Drive</span>
+                  <ExternalLink size={13} />
+                </a>
+              </div>
             </div>
 
+            {/* Student Two-Step Submission Section */}
             {currentUser?.role === "student" && (
-              <div className="self-start sm:self-auto">
-                <Badge status={displayStatus} />
-              </div>
+              <section className="border-t border-slate-100 pt-6">
+                <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                  Submission Status
+                </h2>
+
+                {studentStatus === "submitted" ? (
+                  <div className="flex items-start sm:items-center gap-3.5 rounded-xl border border-emerald-200 bg-emerald-50/70 p-4 text-emerald-800">
+                    <CheckCircle2 className="h-6 w-6 text-emerald-600 shrink-0 mt-0.5 sm:mt-0" />
+                    <div>
+                      <p className="font-bold text-sm text-emerald-900">
+                        Assignment Submitted
+                      </p>
+                      <p className="text-xs sm:text-sm text-emerald-700 mt-0.5">
+                        Your submission has been recorded and verified in localStorage.
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="rounded-xl border border-slate-200 bg-slate-50 p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                      <p className="font-semibold text-slate-900 text-sm">
+                        Ready to submit your work?
+                      </p>
+                      <p className="text-xs text-slate-500 mt-0.5">
+                        Click below to initiate the two-step submission verification.
+                      </p>
+                    </div>
+
+                    <button
+                      onClick={() => setShowDialog(true)}
+                      className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 cursor-pointer active:scale-95"
+                    >
+                      <CheckCircle2 className="h-4 w-4" />
+                      <span>Yes, I have submitted</span>
+                    </button>
+                  </div>
+                )}
+              </section>
             )}
           </div>
-
-          <div>
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-2">
-              Description & Requirements
-            </h2>
-            <p className="text-sm sm:text-base leading-7 text-slate-700 whitespace-pre-line">
-              {assignment.description}
-            </p>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2 pt-2">
-            <div className="rounded-xl bg-slate-50 p-4 border border-slate-100">
-              <div className="flex items-center gap-2 text-xs font-medium text-slate-500 mb-1">
-                <CalendarDays size={15} />
-                <span>Due Date</span>
-              </div>
-              <p className="font-semibold text-slate-900 text-sm">
-                {formatDate(assignment.dueDate)}
-              </p>
-            </div>
-
-            <div className="rounded-xl bg-slate-50 p-4 border border-slate-100 flex items-center justify-between">
-              <div>
-                <p className="text-xs font-medium text-slate-500 mb-1">
-                  Reference / Submission Drive
-                </p>
-                <p className="font-semibold text-slate-900 text-sm">
-                  Google Drive Resource
-                </p>
-              </div>
-
-              <a
-                href={assignment.driveLink}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-lg bg-slate-900 px-3.5 py-2 text-xs font-semibold text-white transition hover:bg-slate-800 cursor-pointer shadow-sm"
-              >
-                <span>Open</span>
-                <ExternalLink size={13} />
-              </a>
-            </div>
-          </div>
-
-          {currentUser?.role === "student" && (
-            <div className="pt-4 border-t border-slate-100 text-xs text-slate-400">
-              Note: The 2-step submission flow will be activated in Phase 5.
-            </div>
-          )}
         </div>
       </div>
-    </div>
+
+      {/* Two-Step Confirmation Dialog */}
+      <SubmissionDialog
+        isOpen={showDialog}
+        onClose={() => setShowDialog(false)}
+        onConfirm={handleConfirmSubmission}
+        assignmentTitle={assignment.title}
+      />
+    </DashboardLayout>
   );
 }
