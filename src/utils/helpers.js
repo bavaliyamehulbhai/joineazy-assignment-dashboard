@@ -32,3 +32,11 @@ export const getStudents = (users = []) => {
 export const getAdmins = (users = []) => {
   return users.filter((user) => user.role === "admin");
 };
+
+export const isAdmin = (user) => {
+  return user?.role === "admin";
+};
+
+export const isStudent = (user) => {
+  return user?.role === "student";
+};

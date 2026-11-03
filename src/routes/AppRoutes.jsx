@@ -1,19 +1,60 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+
 import Login from "../pages/Login";
 import StudentDashboard from "../pages/StudentDashboard";
 import AdminDashboard from "../pages/AdminDashboard";
 import AssignmentDetails from "../pages/AssignmentDetails";
+import ProtectedRoute from "./ProtectedRoute";
 
 export default function AppRoutes() {
   return (
-    <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route path="/student" element={<StudentDashboard />} />
-      <Route path="/student/assignment/:id" element={<AssignmentDetails />} />
-      <Route path="/admin" element={<AdminDashboard />} />
-      <Route path="/admin/assignment/:id" element={<AssignmentDetails />} />
-      <Route path="*" element={<Navigate to="/login" replace />} />
-    </Routes>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+
+        <Route
+          path="/student"
+          element={
+            <ProtectedRoute allowedRole="student">
+              <StudentDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/student/assignment/:id"
+          element={
+            <ProtectedRoute allowedRole="student">
+              <AssignmentDetails />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute allowedRole="admin">
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/assignment/:id"
+          element={
+            <ProtectedRoute allowedRole="admin">
+              <AssignmentDetails />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
-
