@@ -36,21 +36,35 @@ export const getStudentProgress = (assignments = [], studentId) => {
 
 export const getAssignmentProgress = (assignment) => {
   if (!assignment || !assignment.assignedTo) {
+    return 0;
+  }
+
+  const total = assignment.assignedTo.length;
+
+  if (total === 0) {
+    return 0;
+  }
+
+  const submitted = Object.values(assignment.submissions || {}).filter(
+    (status) => status === "submitted"
+  ).length;
+
+  return Math.round((submitted / total) * 100);
+};
+
+export const getAssignmentProgressDetailed = (assignment) => {
+  if (!assignment || !assignment.assignedTo) {
     return { submitted: 0, total: 0, percentage: 0 };
   }
 
   const total = assignment.assignedTo.length;
 
   if (total === 0) {
-    return {
-      submitted: 0,
-      total: 0,
-      percentage: 0,
-    };
+    return { submitted: 0, total: 0, percentage: 0 };
   }
 
-  const submitted = assignment.assignedTo.filter(
-    (studentId) => assignment.submissions?.[studentId] === "submitted"
+  const submitted = Object.values(assignment.submissions || {}).filter(
+    (status) => status === "submitted"
   ).length;
 
   return {

@@ -1,16 +1,22 @@
 import { LayoutDashboard, BookOpen } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import { useApp } from "../../context/AppContext";
 
 export default function Sidebar() {
+  const { currentUser } = useApp();
+
+  const basePath = currentUser?.role === "admin" ? "/admin" : "/student";
+  const portalName = currentUser?.role === "admin" ? "Admin Portal" : "Student Portal";
+
   const links = [
     {
       label: "Dashboard",
-      path: "/student",
+      path: basePath,
       icon: LayoutDashboard,
     },
     {
       label: "Assignments",
-      path: "/student",
+      path: basePath,
       icon: BookOpen,
     },
   ];
@@ -26,6 +32,7 @@ export default function Sidebar() {
               <NavLink
                 key={link.label}
                 to={link.path}
+                end
                 className={({ isActive }) =>
                   `flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition ${
                     isActive
@@ -42,8 +49,8 @@ export default function Sidebar() {
         </nav>
 
         <div className="rounded-xl bg-slate-50 p-4 border border-slate-100 text-xs text-slate-500">
-          <p className="font-semibold text-slate-700">Joineazy Student</p>
-          <p className="mt-1">Version 1.0.0 (Vite + React)</p>
+          <p className="font-semibold text-slate-700">Joineazy {portalName}</p>
+          <p className="mt-1">Logged in as {currentUser?.name}</p>
         </div>
       </div>
     </aside>

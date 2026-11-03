@@ -1,77 +1,127 @@
-import { useNavigate } from "react-router-dom";
+import { useMemo, useState } from "react";
+import { Plus } from "lucide-react";
+
+import DashboardLayout from "../components/layout/DashboardLayout";
+import AdminStats from "../components/admin/AdminStats";
+import AssignmentTable from "../components/admin/AssignmentTable";
+import AssignmentModal from "../components/admin/AssignmentModal";
+import DeleteConfirmDialog from "../components/common/DeleteConfirmDialog";
+
 import { useApp } from "../context/AppContext";
 
 export default function AdminDashboard() {
-  const { currentUser, logout, getAdminAssignmentsForCurrentUser } = useApp();
-  const navigate = useNavigate();
+  const {
+    assignments,
+    users,
+    currentUser,
+    createAssignment,
+    updateAssignment,
+    deleteAssignment,
+    isLoading,
+  } = useApp();
 
-  const myCreatedAssignments = getAdminAssignmentsForCurrentUser();
+  const [showModal, setShowModal] = useState(false);
+  const [editingAssignment, setEditingAssignment] = useState(null);
+  const [deletingAssignment, setDeletingAssignment] = useState(null);
+
+  const adminAssignments = useMemo(() => {
+    if (!currentUser) return [];
+
+    return assignments.filter(
+      (assignment) => assignment.createdBy === currentUser.id
+    );
+  }, [assignments, currentUser]);
+
+  if (isLoading || !currentUser) {
+    return null;
+  }
+
+  const cohortStudents = users.filter((u) => u.role === "student");
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6">
-      <div className="mx-auto max-w-5xl">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-slate-200">
+    <DashboardLayout>
+      <div className="space-y-8">
+        {/* Header */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <span className="inline-block px-2.5 py-0.5 bg-purple-50 text-purple-700 text-xs font-semibold rounded-full border border-purple-200 mb-2">
-              Admin Portal
+            <span className="inline-block px-2.5 py-0.5 bg-blue-50 text-blue-700 text-xs font-semibold rounded-full border border-blue-200 mb-2">
+              Faculty / Admin Portal
             </span>
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">
-              Welcome, {currentUser?.name} 👨‍🏫
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+              Welcome, {currentUser.name} 👨‍🏫
             </h1>
-            <p className="text-sm text-slate-500 mt-1">{currentUser?.email}</p>
+            <p className="mt-1 text-sm text-slate-500">
+              Manage your created assignments, student allocation, and track live class progress.
+            </p>
           </div>
 
           <button
             onClick={() => {
-              logout();
-              navigate("/login");
+              setEditingAssignment(null);
+              setShowModal(true);
             }}
-            className="self-start sm:self-auto rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 cursor-pointer shadow-sm"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white hover:bg-blue-700 transition cursor-pointer shadow-sm active:scale-95"
           >
-            Logout
+            <Plus className="h-4 w-4" />
+            <span>Create Assignment</span>
           </button>
         </div>
 
-        <div className="mt-8 rounded-2xl bg-white p-6 sm:p-8 shadow-sm border border-slate-200">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-slate-800">
-              Your Created Assignments ({myCreatedAssignments.length})
+        {/* Admin Overview Metrics */}
+        <AdminStats
+          assignments={adminAssignments}
+          users={users}
+        />
+
+        {/* Assignment Table & Mobile Card View */}
+        <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-bold text-slate-900 tracking-tight">
+              My Created Assignments
             </h2>
-            <span className="text-xs text-purple-600 bg-purple-50 px-2.5 py-1 rounded-full font-medium border border-purple-200">
-              Admin Ownership Isolated
+            <span className="text-xs font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full">
+              {adminAssignments.length} Assignment{adminAssignments.length !== 1 ? "s" : ""}
             </span>
           </div>
 
-          <p className="text-slate-600 text-sm mb-6">
-            Admin ownership check verified: you can only view and manage assignments created by your administrator account.
-          </p>
+          <AssignmentTable
+            assignments={adminAssignments}
+            onEdit={(assignment) => {
+              setEditingAssignment(assignment);
+              setShowModal(true);
+            }}
+            onDelete={(assignment) => {
+              setDeletingAssignment(assignment);
+            }}
+          />
+        </section>
 
-          <div className="space-y-3">
-            {myCreatedAssignments.map((assignment) => (
-              <div
-                key={assignment.id}
-                className="p-4 bg-slate-50 rounded-xl border border-slate-200/80 flex justify-between items-center"
-              >
-                <div>
-                  <h3 className="font-semibold text-slate-800 text-sm">
-                    {assignment.title}
-                  </h3>
-                  <p className="text-xs text-slate-500 mt-0.5">
-                    Assigned to: {assignment.assignedTo?.length || 0} students
-                  </p>
-                </div>
-                <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-slate-200 text-slate-700">
-                  Due: {assignment.dueDate}
-                </span>
-              </div>
-            ))}
-          </div>
+        {/* Create / Edit Modal */}
+        <AssignmentModal
+          isOpen={showModal}
+          onClose={() => {
+            setShowModal(false);
+            setEditingAssignment(null);
+          }}
+          students={cohortStudents}
+          editingAssignment={editingAssignment}
+          onCreate={createAssignment}
+          onUpdate={updateAssignment}
+        />
 
-          <div className="mt-6 pt-4 border-t border-slate-100 text-xs text-slate-400">
-            Full Admin Assignment CRUD, Allocation modals, and Student status tracking will be built in Phase 6 & Phase 7.
-          </div>
-        </div>
+        {/* Delete Confirmation Modal */}
+        <DeleteConfirmDialog
+          isOpen={Boolean(deletingAssignment)}
+          title={deletingAssignment?.title}
+          onClose={() => setDeletingAssignment(null)}
+          onConfirm={() => {
+            if (deletingAssignment) {
+              deleteAssignment(deletingAssignment.id);
+              setDeletingAssignment(null);
+            }
+          }}
+        />
       </div>
-    </div>
+    </DashboardLayout>
   );
 }

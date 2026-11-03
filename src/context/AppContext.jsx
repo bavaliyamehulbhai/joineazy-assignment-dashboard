@@ -87,6 +87,70 @@ export const AppProvider = ({ children }) => {
     });
   };
 
+  const createAssignment = (assignmentData) => {
+    const newId =
+      typeof crypto !== "undefined" && crypto.randomUUID
+        ? crypto.randomUUID()
+        : `assignment-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+
+    const newAssignment = {
+      id: newId,
+      ...assignmentData,
+      createdBy: currentUser?.id || "admin-1",
+      createdAt: new Date().toISOString(),
+      submissions: (assignmentData.assignedTo || []).reduce((acc, studentId) => {
+        acc[studentId] = "pending";
+        return acc;
+      }, {}),
+    };
+
+    setAssignments((prevAssignments) => {
+      const updatedAssignments = [newAssignment, ...prevAssignments];
+      saveAssignments(updatedAssignments);
+      return updatedAssignments;
+    });
+
+    return newAssignment;
+  };
+
+  const updateAssignment = (assignmentId, updatedData) => {
+    setAssignments((prevAssignments) => {
+      const updatedAssignments = prevAssignments.map((assignment) => {
+        if (assignment.id !== assignmentId) {
+          return assignment;
+        }
+
+        const updatedAssignedTo = updatedData.assignedTo || [];
+        const updatedSubmissions = {};
+
+        updatedAssignedTo.forEach((studentId) => {
+          updatedSubmissions[studentId] =
+            assignment.submissions?.[studentId] || "pending";
+        });
+
+        return {
+          ...assignment,
+          ...updatedData,
+          submissions: updatedSubmissions,
+        };
+      });
+
+      saveAssignments(updatedAssignments);
+      return updatedAssignments;
+    });
+  };
+
+  const deleteAssignment = (assignmentId) => {
+    setAssignments((prevAssignments) => {
+      const updatedAssignments = prevAssignments.filter(
+        (assignment) => assignment.id !== assignmentId
+      );
+
+      saveAssignments(updatedAssignments);
+      return updatedAssignments;
+    });
+  };
+
   const updateAssignments = (updatedAssignments) => {
     setAssignments(updatedAssignments);
     saveAssignments(updatedAssignments);
@@ -122,6 +186,9 @@ export const AppProvider = ({ children }) => {
         login,
         logout,
         submitAssignment,
+        createAssignment,
+        updateAssignment,
+        deleteAssignment,
 
         updateAssignments,
         updateUsers,
