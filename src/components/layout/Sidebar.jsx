@@ -22,7 +22,7 @@ export default function Sidebar() {
   ];
 
   return (
-    <aside className="hidden w-64 shrink-0 border-r border-slate-200 bg-white md:block">
+    <aside className="hidden w-64 shrink-0 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 md:block transition-colors">
       <div className="sticky top-16 h-[calc(100vh-4rem)] p-4 flex flex-col justify-between">
         <nav className="space-y-1">
           {links.map((link) => {
@@ -36,8 +36,8 @@ export default function Sidebar() {
                 className={({ isActive }) =>
                   `flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition ${
                     isActive
-                      ? "bg-slate-900 text-white shadow-sm"
-                      : "text-slate-600 hover:bg-slate-100"
+                      ? "bg-slate-900 dark:bg-indigo-600 text-white shadow-sm"
+                      : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-slate-200"
                   }`
                 }
               >
@@ -48,9 +48,9 @@ export default function Sidebar() {
           })}
         </nav>
 
-        <div className="rounded-xl bg-slate-50 p-4 border border-slate-100 text-xs text-slate-500">
-          <p className="font-semibold text-slate-700">Joineazy {portalName}</p>
-          <p className="mt-1">Logged in as {currentUser?.name}</p>
+        <div className="rounded-xl bg-slate-50 dark:bg-slate-800/40 p-4 border border-slate-100 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400">
+          <p className="font-semibold text-slate-700 dark:text-slate-300">Joineazy {portalName}</p>
+          <p className="mt-1 truncate">User: {currentUser?.name}</p>
         </div>
       </div>
     </aside>

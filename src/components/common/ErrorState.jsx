@@ -1,15 +1,34 @@
-import Button from "./Button";
+import { AlertCircle } from "lucide-react";
 
-export default function ErrorState({ title = "Something went wrong", message = "Please try again later.", onRetry }) {
+export default function ErrorState({
+  title = "Something went wrong",
+  message = "Please try again.",
+  onRetry,
+}) {
   return (
-    <div className="text-center py-12 px-4 bg-red-50/50 rounded-xl border border-red-200">
-      <div className="text-4xl mb-3">⚠️</div>
-      <h3 className="text-lg font-semibold text-red-800">{title}</h3>
-      <p className="text-red-600 text-sm mt-1 mb-4">{message}</p>
-      {onRetry && (
-        <Button variant="danger" onClick={onRetry}>Try Again</Button>
-      )}
+    <div className="flex min-h-[250px] items-center justify-center px-4 py-8">
+      <div className="max-w-md w-full text-center bg-white dark:bg-slate-900 border border-red-200 dark:border-red-900/50 p-6 rounded-2xl shadow-sm">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-red-50 dark:bg-red-950/50 text-red-600 dark:text-red-400">
+          <AlertCircle className="h-6 w-6" />
+        </div>
+
+        <h2 className="mt-4 text-lg font-bold text-slate-900 dark:text-white tracking-tight">
+          {title}
+        </h2>
+
+        <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-400">
+          {message}
+        </p>
+
+        {onRetry && (
+          <button
+            onClick={onRetry}
+            className="mt-5 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 cursor-pointer transition shadow-sm"
+          >
+            Try Again
+          </button>
+        )}
+      </div>
     </div>
   );
 }
-

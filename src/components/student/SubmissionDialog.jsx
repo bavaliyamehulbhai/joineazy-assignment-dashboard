@@ -9,20 +9,28 @@ export default function SubmissionDialog({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 backdrop-blur-xs transition-opacity animate-in fade-in duration-200">
-      <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl border border-slate-100">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="submission-dialog-title"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
+    >
+      <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-900 p-6 shadow-2xl border border-slate-100 dark:border-slate-800 transition-colors">
         {/* Header */}
         <div className="mb-5 flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400">
               <AlertTriangle className="h-5 w-5" />
             </div>
 
             <div>
-              <h2 className="text-lg font-bold text-slate-900 tracking-tight">
+              <h2
+                id="submission-dialog-title"
+                className="text-lg font-bold text-slate-900 dark:text-white tracking-tight"
+              >
                 Confirm Submission
               </h2>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 Final confirmation required
               </p>
             </div>
@@ -30,7 +38,8 @@ export default function SubmissionDialog({
 
           <button
             onClick={onClose}
-            className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 cursor-pointer transition"
+            aria-label="Close submission dialog"
+            className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer transition"
           >
             <X className="h-5 w-5" />
           </button>
@@ -38,15 +47,15 @@ export default function SubmissionDialog({
 
         {/* Message */}
         <div className="mb-6">
-          <p className="text-sm leading-6 text-slate-600">
+          <p className="text-sm leading-6 text-slate-600 dark:text-slate-300">
             Are you sure you have completed and submitted the work for{" "}
-            <span className="font-semibold text-slate-900">
+            <span className="font-semibold text-slate-900 dark:text-white">
               "{assignmentTitle}"
             </span>
             ?
           </p>
 
-          <p className="mt-2 text-xs text-slate-500 bg-slate-50 p-3 rounded-xl border border-slate-100">
+          <p className="mt-2 text-xs text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl border border-slate-100 dark:border-slate-800">
             💡 Once confirmed, your assignment status will update to <strong>Submitted</strong> and your overall progress will recalculate.
           </p>
         </div>
@@ -55,7 +64,7 @@ export default function SubmissionDialog({
         <div className="flex flex-col-reverse gap-2.5 sm:flex-row sm:justify-end">
           <button
             onClick={onClose}
-            className="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 cursor-pointer transition"
+            className="rounded-xl border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer transition"
           >
             Cancel
           </button>

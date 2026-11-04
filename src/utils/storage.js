@@ -7,9 +7,17 @@ const STORAGE_KEYS = {
   THEME: "joineazy_theme",
 };
 
+const safeParse = (value, fallback) => {
+  try {
+    return value ? JSON.parse(value) : fallback;
+  } catch (err) {
+    console.error("Storage parse error:", err);
+    return fallback;
+  }
+};
+
 export const getUsers = () => {
-  const users = localStorage.getItem(STORAGE_KEYS.USERS);
-  return users ? JSON.parse(users) : null;
+  return safeParse(localStorage.getItem(STORAGE_KEYS.USERS), null);
 };
 
 export const saveUsers = (users) => {
@@ -17,8 +25,7 @@ export const saveUsers = (users) => {
 };
 
 export const getAssignments = () => {
-  const assignments = localStorage.getItem(STORAGE_KEYS.ASSIGNMENTS);
-  return assignments ? JSON.parse(assignments) : null;
+  return safeParse(localStorage.getItem(STORAGE_KEYS.ASSIGNMENTS), null);
 };
 
 export const saveAssignments = (assignments) => {
@@ -26,8 +33,7 @@ export const saveAssignments = (assignments) => {
 };
 
 export const getCurrentUser = () => {
-  const user = localStorage.getItem(STORAGE_KEYS.CURRENT_USER);
-  return user ? JSON.parse(user) : null;
+  return safeParse(localStorage.getItem(STORAGE_KEYS.CURRENT_USER), null);
 };
 
 export const saveCurrentUser = (user) => {
@@ -36,6 +42,14 @@ export const saveCurrentUser = (user) => {
 
 export const clearCurrentUser = () => {
   localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
+};
+
+export const getTheme = () => {
+  return localStorage.getItem(STORAGE_KEYS.THEME) || "light";
+};
+
+export const saveTheme = (theme) => {
+  localStorage.setItem(STORAGE_KEYS.THEME, theme);
 };
 
 export const initializeStorage = () => {

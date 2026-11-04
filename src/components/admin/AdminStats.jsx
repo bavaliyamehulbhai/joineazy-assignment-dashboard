@@ -30,25 +30,25 @@ export default function AdminStats({ assignments = [], users = [] }) {
       label: "My Assignments",
       value: totalAssignments,
       icon: ClipboardList,
-      iconBg: "bg-blue-50 text-blue-600",
+      iconBg: "bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400",
     },
     {
       label: "Cohort Students",
       value: students.length,
       icon: Users,
-      iconBg: "bg-purple-50 text-purple-600",
+      iconBg: "bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400",
     },
     {
       label: "Total Submitted",
       value: totalSubmitted,
       icon: CheckCircle2,
-      iconBg: "bg-emerald-50 text-emerald-600",
+      iconBg: "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400",
     },
     {
       label: "Pending Submissions",
       value: totalPending,
       icon: Clock3,
-      iconBg: "bg-amber-50 text-amber-600",
+      iconBg: "bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400",
     },
   ];
 
@@ -60,10 +60,10 @@ export default function AdminStats({ assignments = [], users = [] }) {
         return (
           <div
             key={stat.label}
-            className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md"
+            className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm transition hover:shadow-md"
           >
             <div className="flex items-center justify-between">
-              <p className="text-xs sm:text-sm font-medium text-slate-500">
+              <p className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400">
                 {stat.label}
               </p>
 
@@ -72,7 +72,7 @@ export default function AdminStats({ assignments = [], users = [] }) {
               </div>
             </div>
 
-            <p className="mt-3 text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+            <p className="mt-3 text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
               {stat.value}
             </p>
           </div>

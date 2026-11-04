@@ -14,6 +14,8 @@ import {
   getCurrentUser,
   saveCurrentUser,
   clearCurrentUser,
+  getTheme,
+  saveTheme,
 } from "../utils/storage";
 
 const AppContext = createContext(null);
@@ -23,6 +25,7 @@ export const AppProvider = ({ children }) => {
   const [assignments, setAssignments] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [theme, setTheme] = useState(() => getTheme());
 
   useEffect(() => {
     const initializeApp = () => {
@@ -41,6 +44,20 @@ export const AppProvider = ({ children }) => {
 
     initializeApp();
   }, []);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === "dark") {
+      root.classList.add("dark");
+    } else {
+      root.classList.remove("dark");
+    }
+    saveTheme(theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === "dark" ? "light" : "dark"));
+  };
 
   const login = (userId) => {
     const user = users.find((u) => u.id === userId);
@@ -182,6 +199,8 @@ export const AppProvider = ({ children }) => {
         assignments,
         currentUser,
         isLoading,
+        theme,
+        toggleTheme,
 
         login,
         logout,
