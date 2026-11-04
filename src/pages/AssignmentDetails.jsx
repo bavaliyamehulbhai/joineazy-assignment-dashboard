@@ -14,7 +14,6 @@ export default function AssignmentDetails() {
   const navigate = useNavigate();
 
   const { assignments, currentUser, submitAssignment } = useApp();
-
   const [showDialog, setShowDialog] = useState(false);
 
   const assignment = useMemo(() => {
@@ -24,7 +23,7 @@ export default function AssignmentDetails() {
       return null;
     }
 
-    // Role-based access check: Students can only view assignments allocated to them
+    // Role-based access check
     if (currentUser.role === "student") {
       const isAssigned = foundAssignment.assignedTo?.includes(currentUser.id);
       if (!isAssigned) {
@@ -35,29 +34,31 @@ export default function AssignmentDetails() {
     return foundAssignment;
   }, [assignments, id, currentUser]);
 
+  const backPath = currentUser?.role === "admin" ? "/admin/assignments" : "/student/assignments";
+
   if (!assignment) {
     return (
       <DashboardLayout>
-        <div className="flex min-h-[60vh] items-center justify-center px-4">
-          <div className="max-w-md w-full text-center bg-white dark:bg-slate-900 p-8 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm transition-colors">
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400">
-              <ShieldAlert className="h-7 w-7" />
+        <div className="flex min-h-[50vh] items-center justify-center px-4">
+          <div className="max-w-md w-full text-center bg-white dark:bg-[#1c1c1e] p-6 sm:p-8 rounded-2xl border border-black/[0.06] dark:border-white/[0.08] shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
+              <ShieldAlert className="h-6 w-6" />
             </div>
 
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">
+            <h2 className="text-base sm:text-lg font-semibold text-neutral-900 dark:text-white tracking-tight">
               Assignment Unavailable
             </h2>
 
-            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+            <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
               You do not have permission to view this assignment or it has not been allocated to your account.
             </p>
 
             <button
-              onClick={() => navigate(currentUser?.role === "admin" ? "/admin" : "/student")}
-              className="mt-6 inline-flex items-center gap-2 rounded-xl bg-slate-900 dark:bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 dark:hover:bg-indigo-500 transition cursor-pointer shadow-sm active:scale-95"
+              onClick={() => navigate(backPath)}
+              className="mt-5 inline-flex items-center gap-1.5 rounded-xl bg-[#0071e3] hover:bg-[#0077ed] px-4 py-2 text-xs font-medium text-white transition active:scale-[0.98] cursor-pointer"
             >
-              <ArrowLeft className="h-4 w-4" />
-              <span>Back to Dashboard</span>
+              <ArrowLeft className="h-3.5 w-3.5" />
+              <span>Back to Assignments</span>
             </button>
           </div>
         </div>
@@ -80,29 +81,28 @@ export default function AssignmentDetails() {
 
   return (
     <DashboardLayout>
-      <div className="mx-auto max-w-4xl space-y-6">
-        {/* Navigation Breadcrumb */}
+      <div className="mx-auto max-w-3xl space-y-4 sm:space-y-5">
+        {/* Apple Back Nav */}
         <div>
           <button
-            onClick={() => navigate(currentUser?.role === "admin" ? "/admin" : "/student")}
-            className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer"
+            onClick={() => navigate(backPath)}
+            className="inline-flex items-center gap-1 text-xs font-medium text-neutral-500 hover:text-neutral-900 dark:hover:text-white transition cursor-pointer"
           >
-            <ArrowLeft className="h-4 w-4" />
-            <span>Back to Assignments</span>
+            <ArrowLeft className="h-3.5 w-3.5" />
+            <span>Assignments</span>
           </button>
         </div>
 
-        {/* Main Card */}
-        <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm overflow-hidden transition-colors">
+        {/* Apple Main Detail Card */}
+        <div className="rounded-2xl bg-white dark:bg-[#1c1c1e] border border-black/[0.06] dark:border-white/[0.08] shadow-[0_2px_8px_rgba(0,0,0,0.03)] dark:shadow-none overflow-hidden">
           {/* Header */}
-          <div className="border-b border-slate-100 dark:border-slate-800 p-6 sm:p-8 bg-slate-50/50 dark:bg-slate-800/40">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="border-b border-black/[0.04] dark:border-white/[0.06] p-4 sm:p-6">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
               <div>
-                <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
-                  Assignment Overview
-                </p>
-
-                <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
+                <span className="text-[11px] font-medium text-neutral-400 uppercase tracking-wider">
+                  Coursework
+                </span>
+                <h1 className="text-lg sm:text-xl font-bold text-neutral-900 dark:text-white tracking-tight mt-0.5">
                   {assignment.title}
                 </h1>
               </div>
@@ -116,43 +116,41 @@ export default function AssignmentDetails() {
           </div>
 
           {/* Content Body */}
-          <div className="space-y-6 p-6 sm:p-8">
+          <div className="p-4 sm:p-6 space-y-5">
             {/* Description */}
-            <section>
-              <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                Description & Instructions
+            <div>
+              <h2 className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 mb-1.5">
+                Instructions
               </h2>
-
-              <p className="leading-7 text-slate-700 dark:text-slate-300 text-sm sm:text-base whitespace-pre-line">
+              <p className="leading-relaxed text-neutral-700 dark:text-neutral-300 text-xs sm:text-sm whitespace-pre-line">
                 {assignment.description}
               </p>
-            </section>
+            </div>
 
-            {/* Metadata Grid */}
-            <div className="grid gap-4 sm:grid-cols-2 pt-2">
-              <div className="rounded-xl bg-slate-50 dark:bg-slate-800/50 p-4 border border-slate-100 dark:border-slate-800">
-                <div className="flex items-center gap-2 text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">
-                  <CalendarDays size={15} />
+            {/* Metadata Chips */}
+            <div className="grid gap-3 sm:grid-cols-2 pt-1">
+              <div className="rounded-xl bg-black/[0.02] dark:bg-white/[0.04] border border-black/[0.04] dark:border-white/[0.06] p-3">
+                <div className="flex items-center gap-1.5 text-xs text-neutral-500 dark:text-neutral-400 mb-1">
+                  <CalendarDays size={13} />
                   <span>Due Date</span>
                 </div>
-                <p className="font-bold text-slate-900 dark:text-white text-sm">
+                <p className="font-semibold text-neutral-900 dark:text-white text-sm">
                   {formatDate(assignment.dueDate)}
                 </p>
-
                 {overdue && (
-                  <p className="mt-1 text-xs font-semibold text-rose-600 dark:text-rose-400">
-                    ⚠️ This assignment is overdue, but you can still submit.
+                  <p className="mt-1 text-[11px] text-rose-500 font-medium">
+                    Deadline passed — submission still accepted.
                   </p>
                 )}
               </div>
 
-              <div className="rounded-xl bg-slate-50 dark:bg-slate-800/50 p-4 border border-slate-100 dark:border-slate-800 flex items-center justify-between">
+              <div className="rounded-xl bg-black/[0.02] dark:bg-white/[0.04] border border-black/[0.04] dark:border-white/[0.06] p-3 flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">
-                    Resource / Project Drive
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-0.5">
+                    Course Resources
                   </p>
-                  <p className="font-semibold text-slate-900 dark:text-white text-sm">
-                    Google Drive Link
+                  <p className="font-semibold text-neutral-900 dark:text-white text-xs sm:text-sm">
+                    Google Drive Folder
                   </p>
                 </div>
 
@@ -160,54 +158,58 @@ export default function AssignmentDetails() {
                   href={assignment.driveLink}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-slate-900 dark:bg-indigo-600 px-3.5 py-2 text-xs font-semibold text-white transition hover:bg-slate-800 dark:hover:bg-indigo-500 cursor-pointer shadow-sm"
+                  className="inline-flex items-center gap-1 rounded-lg bg-black/[0.05] dark:bg-white/[0.08] hover:bg-black/[0.08] dark:hover:bg-white/[0.12] px-3 py-1.5 text-xs font-medium text-neutral-800 dark:text-neutral-200 transition active:scale-[0.98]"
                 >
-                  <span>Open Drive</span>
-                  <ExternalLink size={13} />
+                  <span>Open</span>
+                  <ExternalLink size={11} />
                 </a>
               </div>
             </div>
 
-            {/* Student Two-Step Submission Section */}
+            {/* Student 2-Step Submission Area */}
             {currentUser?.role === "student" && (
-              <section className="border-t border-slate-100 dark:border-slate-800 pt-6">
-                <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                  Submission Status
-                </h2>
+              <div className="border-t border-black/[0.04] dark:border-white/[0.06] pt-5">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400">
+                    Submission Status
+                  </span>
+                </div>
 
                 {studentStatus === "submitted" ? (
-                  <div className="flex items-start sm:items-center gap-3.5 rounded-xl border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50/70 dark:bg-emerald-950/30 p-4 text-emerald-800 dark:text-emerald-300">
-                    <CheckCircle2 className="h-6 w-6 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5 sm:mt-0" />
+                  <div className="flex items-center gap-3 rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-emerald-800 dark:text-emerald-300">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500 text-white shrink-0">
+                      <CheckCircle2 size={16} strokeWidth={2.5} />
+                    </div>
                     <div>
-                      <p className="font-bold text-sm text-emerald-950 dark:text-emerald-300">
-                        Assignment Submitted
+                      <p className="font-semibold text-xs sm:text-sm text-emerald-950 dark:text-emerald-200">
+                        Submitted & Verified
                       </p>
-                      <p className="text-xs sm:text-sm text-emerald-700 dark:text-emerald-400 mt-0.5">
-                        Your submission has been recorded and verified in localStorage.
+                      <p className="text-[11px] text-emerald-700 dark:text-emerald-400 mt-0.5">
+                        Your submission has been recorded.
                       </p>
                     </div>
                   </div>
                 ) : (
-                  <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40 p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                  <div className="rounded-xl border border-black/[0.06] dark:border-white/[0.08] bg-black/[0.02] dark:bg-white/[0.03] p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div>
-                      <p className="font-semibold text-slate-900 dark:text-white text-sm">
-                        Ready to submit your work?
+                      <p className="font-semibold text-neutral-900 dark:text-white text-xs sm:text-sm">
+                        Ready to submit?
                       </p>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                        Click below to initiate the two-step submission verification.
+                      <p className="text-[11px] text-neutral-400 mt-0.5">
+                        Click below to verify and finalize your assignment submission.
                       </p>
                     </div>
 
                     <button
                       onClick={() => setShowDialog(true)}
-                      className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 cursor-pointer active:scale-95"
+                      className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#0071e3] hover:bg-[#0077ed] px-4 py-2 text-xs font-medium text-white shadow-xs transition active:scale-[0.98] cursor-pointer"
                     >
-                      <CheckCircle2 className="h-4 w-4" />
+                      <CheckCircle2 size={13} />
                       <span>Yes, I have submitted</span>
                     </button>
                   </div>
                 )}
-              </section>
+              </div>
             )}
           </div>
         </div>

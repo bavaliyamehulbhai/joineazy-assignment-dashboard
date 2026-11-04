@@ -1,15 +1,14 @@
-import { useMemo, useState } from "react";
-import { Search, SlidersHorizontal, ArrowUpDown } from "lucide-react";
+import { useMemo } from "react";
+import { Link } from "react-router-dom";
+import { ArrowRight, AlertTriangle, CheckCircle2, BookOpen, Clock } from "lucide-react";
 
 import DashboardLayout from "../components/layout/DashboardLayout";
 import StudentStats from "../components/student/StudentStats";
-import AssignmentCard from "../components/student/AssignmentCard";
 import ProgressBar from "../components/common/ProgressBar";
-import EmptyState from "../components/common/EmptyState";
+import Badge from "../components/common/Badge";
 
 import { useApp } from "../context/AppContext";
-import { isOverdue } from "../utils/helpers";
-
+import { isOverdue, formatDate } from "../utils/helpers";
 import {
   getStudentProgress,
   getSubmittedCount,
@@ -19,13 +18,8 @@ import {
 export default function StudentDashboard() {
   const { currentUser, assignments, isLoading } = useApp();
 
-  const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [sortBy, setSortBy] = useState("dueDateAsc");
-
   const studentAssignments = useMemo(() => {
     if (!currentUser) return [];
-
     return assignments.filter((assignment) =>
       assignment.assignedTo?.includes(currentUser.id)
     );
@@ -40,182 +34,216 @@ export default function StudentDashboard() {
   const pending = getPendingCount(assignments, currentUser.id);
   const progress = getStudentProgress(assignments, currentUser.id);
 
-  // Search & Status Filtering
-  const filteredAssignments = studentAssignments.filter((assignment) => {
-    const studentStatus =
-      assignment.submissions?.[currentUser.id] || "pending";
-    const overdue =
-      studentStatus === "pending" && isOverdue(assignment.dueDate);
+  // Identify overdue and urgent pending assignments
+  const pendingAssignments = studentAssignments.filter(
+    (a) => (a.submissions?.[currentUser.id] || "pending") === "pending"
+  );
 
-    const matchesSearch =
-      assignment.title.toLowerCase().includes(search.toLowerCase()) ||
-      assignment.description.toLowerCase().includes(search.toLowerCase());
+  const overdueAssignments = pendingAssignments.filter((a) =>
+    isOverdue(a.dueDate)
+  );
 
-    let matchesStatus = true;
-    if (statusFilter === "submitted") {
-      matchesStatus = studentStatus === "submitted";
-    } else if (statusFilter === "pending") {
-      matchesStatus = studentStatus === "pending" && !overdue;
-    } else if (statusFilter === "overdue") {
-      matchesStatus = overdue;
-    }
-
-    return matchesSearch && matchesStatus;
-  });
-
-  // Sorting
-  const sortedAssignments = [...filteredAssignments].sort((a, b) => {
-    if (sortBy === "dueDateAsc") {
-      return new Date(a.dueDate) - new Date(b.dueDate);
-    }
-    if (sortBy === "dueDateDesc") {
-      return new Date(b.dueDate) - new Date(a.dueDate);
-    }
-    if (sortBy === "titleAsc") {
-      return a.title.localeCompare(b.title);
-    }
-    if (sortBy === "titleDesc") {
-      return b.title.localeCompare(a.title);
-    }
-    return 0;
-  });
+  // Recent 3 assignments
+  const recentAssignments = [...studentAssignments].slice(0, 3);
 
   return (
     <DashboardLayout>
-      <div className="space-y-8">
-        {/* Header */}
-        <section>
-          <span className="inline-block px-2.5 py-0.5 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-400 text-xs font-semibold rounded-full border border-indigo-200 dark:border-indigo-800/60 mb-2">
-            Student Portal
-          </span>
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
-            Welcome, {currentUser.name} 👋
-          </h1>
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-            Track your tasks, monitor due dates, and record verified submissions.
-          </p>
-        </section>
-
-        {/* Metric Cards */}
-        <StudentStats
-          total={total}
-          submitted={submitted}
-          pending={pending}
-        />
-
-        {/* Progress Bar Section */}
-        <section className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 sm:p-6 shadow-sm">
-          <div className="mb-4">
-            <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
-              Overall Submission Progress
-            </h2>
-            <p className="mt-0.5 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-              {submitted} of {total} assignments completed
+      <div className="space-y-5 sm:space-y-6">
+        {/* Apple-style Welcome Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-neutral-900 dark:text-white">
+              Welcome back, {currentUser.name?.split(" ")[0]}
+            </h1>
+            <p className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 mt-0.5">
+              Here is your academic progress and upcoming deadlines overview.
             </p>
           </div>
 
-          <ProgressBar percentage={progress} />
-        </section>
+          <Link
+            to="/student/assignments"
+            className="inline-flex items-center gap-1.5 self-start sm:self-auto rounded-xl bg-[#0071e3] hover:bg-[#0077ed] text-white px-3.5 py-2 text-xs font-medium shadow-xs transition active:scale-[0.98]"
+          >
+            <span>View All Assignments</span>
+            <ArrowRight size={13} />
+          </Link>
+        </div>
 
-        {/* Search, Filter & Sort Toolbar */}
-        <section className="flex flex-col gap-3 lg:flex-row lg:items-center">
-          {/* Search Box */}
-          <div className="relative flex-1">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-            <input
-              type="text"
-              id="student-search"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search assignments by title or keyword..."
-              aria-label="Search assignments"
-              className="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 pl-10 pr-12 py-2.5 text-sm text-slate-900 dark:text-white outline-none transition focus:border-slate-900 dark:focus:border-indigo-500 focus:ring-2 focus:ring-slate-200 dark:focus:ring-indigo-950 placeholder:text-slate-400"
-            />
-            {search && (
-              <button
-                onClick={() => setSearch("")}
-                aria-label="Clear search query"
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
-              >
-                Clear
-              </button>
-            )}
-          </div>
+        {/* Apple Metric Cards */}
+        <StudentStats total={total} submitted={submitted} pending={pending} />
 
-          <div className="flex flex-col sm:flex-row gap-3">
-            {/* Status Filter */}
-            <div className="flex items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-1.5 shadow-2xs">
-              <SlidersHorizontal className="h-4 w-4 text-slate-400 shrink-0" />
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                aria-label="Filter assignments by status"
-                className="w-full sm:w-36 bg-transparent text-xs sm:text-sm text-slate-700 dark:text-slate-200 outline-none cursor-pointer"
-              >
-                <option value="all" className="dark:bg-slate-900">All Status</option>
-                <option value="pending" className="dark:bg-slate-900">Pending</option>
-                <option value="submitted" className="dark:bg-slate-900">Submitted</option>
-                <option value="overdue" className="dark:bg-slate-900">Overdue</option>
-              </select>
+        {/* Progress Card */}
+        <div className="rounded-2xl bg-white dark:bg-[#1c1c1e] border border-black/[0.06] dark:border-white/[0.08] shadow-[0_2px_8px_rgba(0,0,0,0.03)] dark:shadow-none p-4 sm:p-5">
+          <div className="flex items-center justify-between mb-2">
+            <div>
+              <h2 className="text-sm font-semibold text-neutral-900 dark:text-white tracking-tight">
+                Coursework Progress
+              </h2>
+              <p className="text-xs text-neutral-400 mt-0.5">
+                {submitted} of {total} assignments completed
+              </p>
             </div>
-
-            {/* Sorting */}
-            <div className="flex items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-1.5 shadow-2xs">
-              <ArrowUpDown className="h-4 w-4 text-slate-400 shrink-0" />
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                aria-label="Sort assignments"
-                className="w-full sm:w-44 bg-transparent text-xs sm:text-sm text-slate-700 dark:text-slate-200 outline-none cursor-pointer"
-              >
-                <option value="dueDateAsc" className="dark:bg-slate-900">Due Date: Earliest</option>
-                <option value="dueDateDesc" className="dark:bg-slate-900">Due Date: Latest</option>
-                <option value="titleAsc" className="dark:bg-slate-900">Title: A-Z</option>
-                <option value="titleDesc" className="dark:bg-slate-900">Title: Z-A</option>
-              </select>
-            </div>
-          </div>
-        </section>
-
-        {/* Assignment Cards Section */}
-        <section>
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">
-              My Assignments
-            </h2>
-            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-full">
-              Showing {sortedAssignments.length} of {total}
+            <span className="text-lg font-bold text-neutral-900 dark:text-white tabular-nums tracking-tight">
+              {progress}%
             </span>
           </div>
 
-          {studentAssignments.length === 0 ? (
-            <EmptyState
-              title="No assignments assigned yet"
-              description="Your instructor has not allocated any assignments to your account."
-            />
-          ) : sortedAssignments.length === 0 ? (
-            <EmptyState
-              title="No matching assignments found"
-              description="No tasks match your current search query or filter combination."
-              actionLabel="Reset Filters"
-              onAction={() => {
-                setSearch("");
-                setStatusFilter("all");
-                setSortBy("dueDateAsc");
-              }}
-            />
-          ) : (
-            <div className="grid gap-4 md:grid-cols-2">
-              {sortedAssignments.map((assignment) => (
-                <AssignmentCard
-                  key={assignment.id}
-                  assignment={assignment}
-                  currentUser={currentUser}
-                />
-              ))}
+          <ProgressBar percentage={progress} showLabel={false} height="h-2.5" />
+        </div>
+
+        {/* Split Grid: Priority Deadlines & Recent Assignments */}
+        <div className="grid gap-5 lg:grid-cols-2">
+          {/* Action Required / Urgent Deadlines */}
+          <div className="rounded-2xl bg-white dark:bg-[#1c1c1e] border border-black/[0.06] dark:border-white/[0.08] shadow-[0_2px_8px_rgba(0,0,0,0.03)] dark:shadow-none p-4 sm:p-5 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <div className="p-1.5 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                    <Clock size={15} />
+                  </div>
+                  <h2 className="text-sm font-semibold text-neutral-900 dark:text-white tracking-tight">
+                    Action Required
+                  </h2>
+                </div>
+
+                {overdueAssignments.length > 0 && (
+                  <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-rose-600 dark:text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded-full">
+                    <AlertTriangle size={11} />
+                    {overdueAssignments.length} Overdue
+                  </span>
+                )}
+              </div>
+
+              {pendingAssignments.length === 0 ? (
+                <div className="py-6 text-center">
+                  <div className="mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600">
+                    <CheckCircle2 size={18} />
+                  </div>
+                  <p className="text-xs font-medium text-neutral-800 dark:text-neutral-200">
+                    All caught up!
+                  </p>
+                  <p className="text-[11px] text-neutral-400 mt-0.5">
+                    No pending assignments require your submission.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {pendingAssignments.slice(0, 3).map((assignment) => {
+                    const isTaskOverdue = isOverdue(assignment.dueDate);
+                    return (
+                      <Link
+                        key={assignment.id}
+                        to={`/student/assignment/${assignment.id}`}
+                        className="group flex items-center justify-between p-2.5 rounded-xl bg-black/[0.02] dark:bg-white/[0.03] hover:bg-black/[0.05] dark:hover:bg-white/[0.06] border border-black/[0.04] dark:border-white/[0.05] transition"
+                      >
+                        <div className="min-w-0 pr-2">
+                          <p className="text-xs font-semibold text-neutral-900 dark:text-white truncate group-hover:text-[#0071e3] transition-colors">
+                            {assignment.title}
+                          </p>
+                          <p className="text-[10px] text-neutral-400 mt-0.5">
+                            Due {formatDate(assignment.dueDate)}
+                          </p>
+                        </div>
+
+                        <div className="flex items-center gap-2 shrink-0">
+                          {isTaskOverdue ? (
+                            <span className="text-[10px] font-semibold text-rose-500 bg-rose-500/10 px-2 py-0.5 rounded-md">
+                              Overdue
+                            </span>
+                          ) : (
+                            <span className="text-[10px] font-medium text-amber-600 bg-amber-500/10 px-2 py-0.5 rounded-md">
+                              Pending
+                            </span>
+                          )}
+                          <ArrowRight
+                            size={12}
+                            className="text-neutral-400 group-hover:text-neutral-700 dark:group-hover:text-white group-hover:translate-x-0.5 transition"
+                          />
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
             </div>
-          )}
-        </section>
+
+            {pendingAssignments.length > 3 && (
+              <Link
+                to="/student/assignments"
+                className="mt-3 text-[11px] font-medium text-[#0071e3] hover:underline flex items-center justify-end gap-1"
+              >
+                <span>+{pendingAssignments.length - 3} more pending</span>
+                <ArrowRight size={11} />
+              </Link>
+            )}
+          </div>
+
+          {/* Recent Coursework Snapshot */}
+          <div className="rounded-2xl bg-white dark:bg-[#1c1c1e] border border-black/[0.06] dark:border-white/[0.08] shadow-[0_2px_8px_rgba(0,0,0,0.03)] dark:shadow-none p-4 sm:p-5 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <div className="p-1.5 rounded-lg bg-black/[0.04] dark:bg-white/[0.08] text-neutral-700 dark:text-neutral-300">
+                    <BookOpen size={15} />
+                  </div>
+                  <h2 className="text-sm font-semibold text-neutral-900 dark:text-white tracking-tight">
+                    Coursework Snapshot
+                  </h2>
+                </div>
+
+                <Link
+                  to="/student/assignments"
+                  className="text-xs font-medium text-[#0071e3] hover:underline"
+                >
+                  See all
+                </Link>
+              </div>
+
+              <div className="space-y-2">
+                {recentAssignments.map((assignment) => {
+                  const studentStatus =
+                    assignment.submissions?.[currentUser.id] || "pending";
+                  const isTaskOverdue =
+                    studentStatus === "pending" && isOverdue(assignment.dueDate);
+
+                  return (
+                    <Link
+                      key={assignment.id}
+                      to={`/student/assignment/${assignment.id}`}
+                      className="group flex items-center justify-between p-2.5 rounded-xl bg-black/[0.02] dark:bg-white/[0.03] hover:bg-black/[0.05] dark:hover:bg-white/[0.06] border border-black/[0.04] dark:border-white/[0.05] transition"
+                    >
+                      <div className="min-w-0 pr-2">
+                        <p className="text-xs font-semibold text-neutral-900 dark:text-white truncate group-hover:text-[#0071e3] transition-colors">
+                          {assignment.title}
+                        </p>
+                        <p className="text-[10px] text-neutral-400 mt-0.5 truncate">
+                          {assignment.description}
+                        </p>
+                      </div>
+
+                      <div className="shrink-0">
+                        <Badge
+                          status={isTaskOverdue ? "overdue" : studentStatus}
+                        />
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="mt-3 pt-3 border-t border-black/[0.04] dark:border-white/[0.06] flex items-center justify-between text-[11px] text-neutral-400">
+              <span>{total} total assigned</span>
+              <Link
+                to="/student/assignments"
+                className="font-medium text-[#0071e3] hover:underline flex items-center gap-1"
+              >
+                <span>Assignments Hub</span>
+                <ArrowRight size={11} />
+              </Link>
+            </div>
+          </div>
+        </div>
       </div>
     </DashboardLayout>
   );

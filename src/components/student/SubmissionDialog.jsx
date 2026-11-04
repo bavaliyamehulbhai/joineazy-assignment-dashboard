@@ -1,4 +1,4 @@
-import { AlertTriangle, CheckCircle2, X } from "lucide-react";
+import { AlertCircle, CheckCircle2, X } from "lucide-react";
 
 export default function SubmissionDialog({
   isOpen,
@@ -13,67 +13,67 @@ export default function SubmissionDialog({
       role="dialog"
       aria-modal="true"
       aria-labelledby="submission-dialog-title"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 backdrop-blur-sm transition-opacity"
     >
-      <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-900 p-6 shadow-2xl border border-slate-100 dark:border-slate-800 transition-colors">
+      <div className="w-full max-w-sm rounded-2xl bg-white/95 dark:bg-[#1c1c1e]/95 backdrop-blur-2xl p-5 border border-black/[0.08] dark:border-white/[0.1] shadow-2xl transition-colors">
         {/* Header */}
-        <div className="mb-5 flex items-start justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400">
-              <AlertTriangle className="h-5 w-5" />
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#0071e3]/10 text-[#0071e3]">
+              <AlertCircle size={18} />
             </div>
 
             <div>
               <h2
                 id="submission-dialog-title"
-                className="text-lg font-bold text-slate-900 dark:text-white tracking-tight"
+                className="text-sm sm:text-base font-semibold text-neutral-900 dark:text-white tracking-tight"
               >
                 Confirm Submission
               </h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
-                Final confirmation required
+              <p className="text-[11px] text-neutral-400">
+                Action confirmation
               </p>
             </div>
           </div>
 
           <button
             onClick={onClose}
-            aria-label="Close submission dialog"
-            className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer transition"
+            aria-label="Close dialog"
+            className="rounded-lg p-1 text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 hover:bg-black/[0.05] dark:hover:bg-white/[0.05] transition cursor-pointer"
           >
-            <X className="h-5 w-5" />
+            <X size={15} />
           </button>
         </div>
 
         {/* Message */}
-        <div className="mb-6">
-          <p className="text-sm leading-6 text-slate-600 dark:text-slate-300">
-            Are you sure you have completed and submitted the work for{" "}
-            <span className="font-semibold text-slate-900 dark:text-white">
+        <div className="space-y-2 mb-5">
+          <p className="text-xs text-neutral-600 dark:text-neutral-300 leading-relaxed">
+            Are you sure you have completed all deliverables for{" "}
+            <span className="font-semibold text-neutral-900 dark:text-white">
               "{assignmentTitle}"
             </span>
             ?
           </p>
 
-          <p className="mt-2 text-xs text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl border border-slate-100 dark:border-slate-800">
-            💡 Once confirmed, your assignment status will update to <strong>Submitted</strong> and your overall progress will recalculate.
+          <p className="text-[11px] text-neutral-500 dark:text-neutral-400 bg-black/[0.02] dark:bg-white/[0.04] p-2.5 rounded-xl border border-black/[0.04] dark:border-white/[0.06]">
+            This will mark your status as <strong>Submitted</strong> and update your progress metrics.
           </p>
         </div>
 
         {/* Actions */}
-        <div className="flex flex-col-reverse gap-2.5 sm:flex-row sm:justify-end">
+        <div className="flex items-center justify-end gap-2">
           <button
             onClick={onClose}
-            className="rounded-xl border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer transition"
+            className="rounded-xl px-3 py-1.5 text-xs font-medium text-neutral-600 dark:text-neutral-300 hover:bg-black/[0.05] dark:hover:bg-white/[0.08] transition cursor-pointer"
           >
             Cancel
           </button>
 
           <button
             onClick={onConfirm}
-            className="flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 cursor-pointer shadow-sm transition active:scale-95"
+            className="inline-flex items-center gap-1 rounded-xl bg-[#0071e3] hover:bg-[#0077ed] px-3.5 py-1.5 text-xs font-medium text-white shadow-xs transition active:scale-[0.98] cursor-pointer"
           >
-            <CheckCircle2 className="h-4 w-4" />
+            <CheckCircle2 size={13} />
             <span>Confirm Submission</span>
           </button>
         </div>

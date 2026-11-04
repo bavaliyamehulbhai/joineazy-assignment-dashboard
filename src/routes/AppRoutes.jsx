@@ -7,7 +7,9 @@ import {
 
 import Login from "../pages/Login";
 import StudentDashboard from "../pages/StudentDashboard";
+import StudentAssignments from "../pages/StudentAssignments";
 import AdminDashboard from "../pages/AdminDashboard";
+import AdminAssignments from "../pages/AdminAssignments";
 import AssignmentDetails from "../pages/AssignmentDetails";
 import AdminAssignmentDetails from "../pages/AdminAssignmentDetails";
 import ProtectedRoute from "./ProtectedRoute";
@@ -29,6 +31,15 @@ export default function AppRoutes() {
         />
 
         <Route
+          path="/student/assignments"
+          element={
+            <ProtectedRoute allowedRole="student">
+              <StudentAssignments />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
           path="/student/assignment/:id"
           element={
             <ProtectedRoute allowedRole="student">
@@ -43,6 +54,15 @@ export default function AppRoutes() {
           element={
             <ProtectedRoute allowedRole="admin">
               <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/assignments"
+          element={
+            <ProtectedRoute allowedRole="admin">
+              <AdminAssignments />
             </ProtectedRoute>
           }
         />

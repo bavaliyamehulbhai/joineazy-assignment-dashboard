@@ -1,13 +1,7 @@
-import {
-  ClipboardList,
-  CheckCircle2,
-  Clock3,
-  Users,
-} from "lucide-react";
+import { ClipboardList, CheckCircle2, Clock3, Users } from "lucide-react";
 
 export default function AdminStats({ assignments = [], users = [] }) {
   const students = users.filter((user) => user.role === "student");
-
   const totalAssignments = assignments.length;
 
   const totalAssignedSlots = assignments.reduce((total, assignment) => {
@@ -27,54 +21,62 @@ export default function AdminStats({ assignments = [], users = [] }) {
 
   const stats = [
     {
-      label: "My Assignments",
+      label: "Created",
       value: totalAssignments,
+      subtext: "My assignments",
       icon: ClipboardList,
-      iconBg: "bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400",
+      iconColor: "text-[#0071e3] bg-[#0071e3]/10",
     },
     {
-      label: "Cohort Students",
+      label: "Cohort Size",
       value: students.length,
+      subtext: "Enrolled students",
       icon: Users,
-      iconBg: "bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400",
+      iconColor: "text-purple-600 dark:text-purple-400 bg-purple-500/10",
     },
     {
-      label: "Total Submitted",
+      label: "Submissions",
       value: totalSubmitted,
+      subtext: "Received works",
       icon: CheckCircle2,
-      iconBg: "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400",
+      iconColor: "text-emerald-600 dark:text-emerald-400 bg-emerald-500/10",
     },
     {
-      label: "Pending Submissions",
+      label: "Pending",
       value: totalPending,
+      subtext: "Awaiting delivery",
       icon: Clock3,
-      iconBg: "bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400",
+      iconColor: "text-amber-600 dark:text-amber-400 bg-amber-500/10",
     },
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
       {stats.map((stat) => {
         const Icon = stat.icon;
 
         return (
           <div
             key={stat.label}
-            className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm transition hover:shadow-md"
+            className="rounded-2xl bg-white dark:bg-[#1c1c1e] border border-black/[0.06] dark:border-white/[0.08] shadow-[0_2px_8px_rgba(0,0,0,0.03)] dark:shadow-none p-3.5 sm:p-4 flex flex-col justify-between transition-all hover:border-black/[0.12] dark:hover:border-white/[0.15]"
           >
             <div className="flex items-center justify-between">
-              <p className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400">
+              <span className="text-[11px] font-medium text-neutral-500 dark:text-neutral-400 tracking-tight">
                 {stat.label}
-              </p>
-
-              <div className={`p-2 rounded-xl ${stat.iconBg}`}>
-                <Icon className="h-5 w-5" />
+              </span>
+              <div className={`p-1.5 rounded-lg ${stat.iconColor}`}>
+                <Icon size={14} strokeWidth={2.2} />
               </div>
             </div>
 
-            <p className="mt-3 text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
-              {stat.value}
-            </p>
+            <div className="mt-2 sm:mt-3">
+              <p className="text-xl sm:text-2xl font-semibold tracking-tight text-neutral-900 dark:text-white tabular-nums">
+                {stat.value}
+              </p>
+              <p className="text-[10px] sm:text-[11px] text-neutral-400 dark:text-neutral-500 truncate mt-0.5">
+                {stat.subtext}
+              </p>
+            </div>
           </div>
         );
       })}

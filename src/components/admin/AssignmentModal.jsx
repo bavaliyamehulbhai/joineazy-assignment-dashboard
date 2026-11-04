@@ -16,6 +16,7 @@ export default function AssignmentModal({
   editingAssignment = null,
   onCreate,
   onUpdate,
+  onSubmit,
 }) {
   const [form, setForm] = useState(emptyForm);
   const [error, setError] = useState("");
@@ -34,7 +35,6 @@ export default function AssignmentModal({
     } else {
       setForm(emptyForm);
     }
-
     setError("");
   }, [editingAssignment, isOpen]);
 
@@ -110,9 +110,11 @@ export default function AssignmentModal({
       return;
     }
 
-    if (isEditing) {
+    if (onSubmit) {
+      onSubmit(form);
+    } else if (isEditing && onUpdate) {
       onUpdate(editingAssignment.id, form);
-    } else {
+    } else if (onCreate) {
       onCreate(form);
     }
 
@@ -124,38 +126,38 @@ export default function AssignmentModal({
       role="dialog"
       aria-modal="true"
       aria-labelledby="assignment-modal-title"
-      className="fixed inset-0 z-50 overflow-y-auto bg-black/60 px-4 py-8 backdrop-blur-xs flex items-center justify-center animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 overflow-y-auto bg-black/40 px-4 py-6 backdrop-blur-sm flex items-center justify-center transition-opacity"
     >
-      <div className="mx-auto w-full max-w-2xl rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-100 dark:border-slate-800 overflow-hidden my-auto transition-colors">
-        {/* Modal Header */}
-        <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-6 py-5 bg-slate-50/50 dark:bg-slate-800/30">
+      <div className="w-full max-w-xl rounded-2xl bg-white/95 dark:bg-[#1c1c1e]/95 backdrop-blur-2xl border border-black/[0.08] dark:border-white/[0.1] shadow-2xl overflow-hidden my-auto transition-colors">
+        {/* Header */}
+        <div className="flex items-center justify-between border-b border-black/[0.04] dark:border-white/[0.06] px-5 py-3.5">
           <div>
             <h2
               id="assignment-modal-title"
-              className="text-xl font-bold text-slate-900 dark:text-white tracking-tight"
+              className="text-sm sm:text-base font-semibold text-neutral-900 dark:text-white tracking-tight"
             >
-              {isEditing ? "Edit Assignment" : "Create New Assignment"}
+              {isEditing ? "Edit Assignment" : "New Assignment"}
             </h2>
-            <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+            <p className="text-[11px] text-neutral-400">
               {isEditing
-                ? "Update assignment instructions and student allocation."
-                : "Fill details and assign to all or selected cohort students."}
+                ? "Update instructions and student cohort"
+                : "Enter task details and allocate to students"}
             </p>
           </div>
 
           <button
             onClick={onClose}
             aria-label="Close dialog"
-            className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer transition"
+            className="rounded-lg p-1 text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 hover:bg-black/[0.05] dark:hover:bg-white/[0.05] transition cursor-pointer"
           >
-            <X className="h-5 w-5" />
+            <X size={16} />
           </button>
         </div>
 
-        {/* Modal Form */}
-        <form onSubmit={handleSubmit} className="space-y-5 p-6">
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-3.5 p-5">
           {error && (
-            <div className="rounded-xl border border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/40 px-4 py-3 text-xs sm:text-sm font-medium text-red-700 dark:text-red-400">
+            <div className="rounded-xl border border-rose-500/20 bg-rose-500/10 px-3.5 py-2 text-xs font-medium text-rose-600 dark:text-rose-400">
               {error}
             </div>
           )}
@@ -164,9 +166,9 @@ export default function AssignmentModal({
           <div>
             <label
               htmlFor="assignment-title"
-              className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300"
+              className="mb-1 block text-[11px] font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400"
             >
-              Assignment Title *
+              Title *
             </label>
             <input
               id="assignment-title"
@@ -176,7 +178,7 @@ export default function AssignmentModal({
               value={form.title}
               onChange={handleChange}
               placeholder="e.g. React Dashboard Challenge"
-              className="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-4 py-2.5 text-sm text-slate-900 dark:text-white outline-none transition focus:border-slate-900 dark:focus:border-indigo-500 focus:ring-2 focus:ring-slate-200 dark:focus:ring-indigo-950"
+              className="w-full rounded-xl border border-black/[0.08] dark:border-white/[0.1] bg-black/[0.02] dark:bg-white/[0.04] px-3.5 py-2 text-xs sm:text-sm text-neutral-900 dark:text-white outline-none focus:border-[#0071e3] transition"
             />
           </div>
 
@@ -184,9 +186,9 @@ export default function AssignmentModal({
           <div>
             <label
               htmlFor="assignment-desc"
-              className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300"
+              className="mb-1 block text-[11px] font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400"
             >
-              Description & Requirements *
+              Description *
             </label>
             <textarea
               id="assignment-desc"
@@ -194,18 +196,18 @@ export default function AssignmentModal({
               required
               value={form.description}
               onChange={handleChange}
-              rows={3}
-              placeholder="Provide clear assignment instructions, deliverables, and guidelines..."
-              className="w-full resize-none rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-4 py-2.5 text-sm text-slate-900 dark:text-white outline-none transition focus:border-slate-900 dark:focus:border-indigo-500 focus:ring-2 focus:ring-slate-200 dark:focus:ring-indigo-950"
+              rows={2}
+              placeholder="Provide clear assignment instructions and guidelines..."
+              className="w-full resize-none rounded-xl border border-black/[0.08] dark:border-white/[0.1] bg-black/[0.02] dark:bg-white/[0.04] px-3.5 py-2 text-xs sm:text-sm text-neutral-900 dark:text-white outline-none focus:border-[#0071e3] transition"
             />
           </div>
 
-          {/* Due Date & Drive Link Grid */}
-          <div className="grid gap-4 sm:grid-cols-2">
+          {/* Due Date & Drive Link */}
+          <div className="grid gap-3 sm:grid-cols-2">
             <div>
               <label
                 htmlFor="assignment-duedate"
-                className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300"
+                className="mb-1 block text-[11px] font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400"
               >
                 Due Date *
               </label>
@@ -216,14 +218,14 @@ export default function AssignmentModal({
                 required
                 value={form.dueDate}
                 onChange={handleChange}
-                className="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-4 py-2.5 text-sm text-slate-900 dark:text-white outline-none transition focus:border-slate-900 dark:focus:border-indigo-500 focus:ring-2 focus:ring-slate-200 dark:focus:ring-indigo-950"
+                className="w-full rounded-xl border border-black/[0.08] dark:border-white/[0.1] bg-black/[0.02] dark:bg-white/[0.04] px-3.5 py-2 text-xs sm:text-sm text-neutral-900 dark:text-white outline-none focus:border-[#0071e3] transition"
               />
             </div>
 
             <div>
               <label
                 htmlFor="assignment-drivelink"
-                className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300"
+                className="mb-1 block text-[11px] font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400"
               >
                 Google Drive Link *
               </label>
@@ -235,43 +237,43 @@ export default function AssignmentModal({
                 value={form.driveLink}
                 onChange={handleChange}
                 placeholder="https://drive.google.com/..."
-                className="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-4 py-2.5 text-sm text-slate-900 dark:text-white outline-none transition focus:border-slate-900 dark:focus:border-indigo-500 focus:ring-2 focus:ring-slate-200 dark:focus:ring-indigo-950"
+                className="w-full rounded-xl border border-black/[0.08] dark:border-white/[0.1] bg-black/[0.02] dark:bg-white/[0.04] px-3.5 py-2 text-xs sm:text-sm text-neutral-900 dark:text-white outline-none focus:border-[#0071e3] transition"
               />
             </div>
           </div>
 
-          {/* Student Allocation Section */}
-          <div className="pt-2">
-            <div className="mb-2.5 flex items-center justify-between">
+          {/* Student Allocation */}
+          <div>
+            <div className="mb-2 flex items-center justify-between">
               <div>
-                <label className="text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
-                  Student Allocation *
+                <label className="text-[11px] font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
+                  Cohort Allocation *
                 </label>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Select which cohort students receive this task.
+                <p className="text-[10px] text-neutral-400">
+                  Select students who should receive this assignment
                 </p>
               </div>
 
-              <div className="flex gap-2">
+              <div className="flex items-center gap-2 text-xs">
                 <button
                   type="button"
                   onClick={selectAllStudents}
-                  className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline cursor-pointer transition"
+                  className="text-xs font-medium text-[#0071e3] hover:underline cursor-pointer"
                 >
                   Select All ({students.length})
                 </button>
-                <span className="text-slate-300 dark:text-slate-700">|</span>
+                <span className="text-neutral-300 dark:text-neutral-700">•</span>
                 <button
                   type="button"
                   onClick={clearStudents}
-                  className="text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer transition"
+                  className="text-xs font-medium text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 cursor-pointer"
                 >
                   Clear
                 </button>
               </div>
             </div>
 
-            <div className="max-h-48 space-y-1.5 overflow-y-auto rounded-xl border border-slate-200 dark:border-slate-800 p-2.5 bg-slate-50/50 dark:bg-slate-950/40">
+            <div className="max-h-40 space-y-1 overflow-y-auto rounded-xl border border-black/[0.06] dark:border-white/[0.08] p-2 bg-black/[0.02] dark:bg-white/[0.02]">
               {students.map((student) => {
                 const isSelected = form.assignedTo.includes(student.id);
 
@@ -279,23 +281,23 @@ export default function AssignmentModal({
                   <div
                     key={student.id}
                     onClick={() => toggleStudent(student.id)}
-                    className={`flex items-center justify-between p-2.5 rounded-lg border cursor-pointer transition select-none ${
+                    className={`flex items-center justify-between p-2 rounded-lg cursor-pointer transition select-none ${
                       isSelected
-                        ? "border-blue-200 dark:border-blue-900 bg-blue-50/70 dark:bg-blue-950/40"
-                        : "border-transparent bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800"
+                        ? "bg-[#0071e3]/10 text-neutral-900 dark:text-white"
+                        : "hover:bg-black/[0.04] dark:hover:bg-white/[0.05] text-neutral-600 dark:text-neutral-400"
                     }`}
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2.5">
                       {isSelected ? (
-                        <CheckSquare className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />
+                        <CheckSquare className="h-4 w-4 text-[#0071e3] shrink-0" />
                       ) : (
-                        <Square className="h-4 w-4 text-slate-400 dark:text-slate-600 shrink-0" />
+                        <Square className="h-4 w-4 text-neutral-400 shrink-0" />
                       )}
                       <div>
-                        <p className="text-xs sm:text-sm font-semibold text-slate-900 dark:text-white">
+                        <p className="text-xs font-medium leading-tight">
                           {student.name}
                         </p>
-                        <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                        <p className="text-[10px] text-neutral-400">
                           {student.email}
                         </p>
                       </div>
@@ -304,8 +306,8 @@ export default function AssignmentModal({
                     <span
                       className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${
                         isSelected
-                          ? "bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300"
-                          : "text-slate-400 dark:text-slate-600"
+                          ? "bg-[#0071e3]/15 text-[#0071e3] dark:text-[#2997ff]"
+                          : "text-neutral-400"
                       }`}
                     >
                       {isSelected ? "Assigned" : "Unassigned"}
@@ -315,27 +317,24 @@ export default function AssignmentModal({
               })}
             </div>
 
-            <div className="mt-2 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-              <span>{form.assignedTo.length} of {students.length} students assigned</span>
-              {form.assignedTo.length === students.length && (
-                <span className="text-emerald-600 dark:text-emerald-400 font-medium">✓ Assigned to All</span>
-              )}
-            </div>
+            <p className="mt-1.5 text-[11px] text-neutral-400">
+              {form.assignedTo.length} of {students.length} students selected
+            </p>
           </div>
 
-          {/* Modal Footer */}
-          <div className="flex flex-col-reverse gap-2.5 border-t border-slate-100 dark:border-slate-800 pt-5 sm:flex-row sm:justify-end">
+          {/* Footer Actions */}
+          <div className="flex items-center justify-end gap-2 pt-2 border-t border-black/[0.04] dark:border-white/[0.06]">
             <button
               type="button"
               onClick={onClose}
-              className="rounded-xl border border-slate-200 dark:border-slate-800 px-5 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer transition"
+              className="rounded-xl px-3.5 py-1.5 text-xs font-medium text-neutral-600 dark:text-neutral-300 hover:bg-black/[0.05] dark:hover:bg-white/[0.08] transition cursor-pointer"
             >
               Cancel
             </button>
 
             <button
               type="submit"
-              className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 cursor-pointer shadow-sm transition active:scale-95"
+              className="rounded-xl bg-[#0071e3] hover:bg-[#0077ed] px-4 py-1.5 text-xs font-medium text-white shadow-xs transition active:scale-[0.98] cursor-pointer"
             >
               {isEditing ? "Save Changes" : "Create Assignment"}
             </button>

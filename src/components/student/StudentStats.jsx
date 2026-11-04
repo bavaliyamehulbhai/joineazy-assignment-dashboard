@@ -3,48 +3,54 @@ import { BookOpen, CheckCircle2, Clock3 } from "lucide-react";
 export default function StudentStats({ total = 0, submitted = 0, pending = 0 }) {
   const stats = [
     {
-      label: "Total Assignments",
+      label: "Assigned",
       value: total,
+      subtext: "Total coursework",
       icon: BookOpen,
-      iconBg: "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300",
+      iconColor: "text-[#0071e3] bg-[#0071e3]/10",
     },
     {
       label: "Submitted",
       value: submitted,
+      subtext: "Verified complete",
       icon: CheckCircle2,
-      iconBg: "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400",
+      iconColor: "text-emerald-600 dark:text-emerald-400 bg-emerald-500/10",
     },
     {
       label: "Pending",
       value: pending,
+      subtext: "Action required",
       icon: Clock3,
-      iconBg: "bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400",
+      iconColor: "text-amber-600 dark:text-amber-400 bg-amber-500/10",
     },
   ];
 
   return (
-    <div className="grid gap-4 sm:grid-cols-3">
+    <div className="grid grid-cols-3 gap-3 sm:gap-4">
       {stats.map((stat) => {
         const Icon = stat.icon;
 
         return (
           <div
             key={stat.label}
-            className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm transition hover:shadow-md"
+            className="rounded-2xl bg-white dark:bg-[#1c1c1e] border border-black/[0.06] dark:border-white/[0.08] shadow-[0_2px_8px_rgba(0,0,0,0.03)] dark:shadow-none p-3.5 sm:p-4 flex flex-col justify-between transition-all hover:border-black/[0.12] dark:hover:border-white/[0.15]"
           >
             <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400">
-                  {stat.label}
-                </p>
-                <p className="mt-2 text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
-                  {stat.value}
-                </p>
+              <span className="text-[11px] font-medium text-neutral-500 dark:text-neutral-400 tracking-tight">
+                {stat.label}
+              </span>
+              <div className={`p-1.5 rounded-lg ${stat.iconColor}`}>
+                <Icon size={14} strokeWidth={2.2} />
               </div>
+            </div>
 
-              <div className={`rounded-xl p-3 ${stat.iconBg}`}>
-                <Icon size={22} />
-              </div>
+            <div className="mt-2 sm:mt-3">
+              <p className="text-xl sm:text-2xl font-semibold tracking-tight text-neutral-900 dark:text-white tabular-nums">
+                {stat.value}
+              </p>
+              <p className="text-[10px] sm:text-[11px] text-neutral-400 dark:text-neutral-500 truncate mt-0.5">
+                {stat.subtext}
+              </p>
             </div>
           </div>
         );

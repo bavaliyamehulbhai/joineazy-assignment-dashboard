@@ -25,26 +25,26 @@ export default function AdminAssignmentDetails() {
   if (!assignment) {
     return (
       <DashboardLayout>
-        <div className="flex min-h-[60vh] items-center justify-center px-4">
-          <div className="max-w-md w-full text-center bg-white dark:bg-slate-900 p-8 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm transition-colors">
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400">
-              <ShieldAlert className="h-7 w-7" />
+        <div className="flex min-h-[50vh] items-center justify-center px-4">
+          <div className="max-w-md w-full text-center bg-white dark:bg-[#1c1c1e] p-6 sm:p-8 rounded-2xl border border-black/[0.06] dark:border-white/[0.08] shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
+              <ShieldAlert className="h-6 w-6" />
             </div>
 
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">
+            <h2 className="text-base sm:text-lg font-semibold text-neutral-900 dark:text-white tracking-tight">
               Assignment Unavailable
             </h2>
 
-            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+            <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
               This assignment does not exist or was created by another administrator.
             </p>
 
             <button
-              onClick={() => navigate("/admin")}
-              className="mt-6 inline-flex items-center gap-2 rounded-xl bg-slate-900 dark:bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 dark:hover:bg-indigo-500 transition cursor-pointer shadow-sm active:scale-95"
+              onClick={() => navigate("/admin/assignments")}
+              className="mt-5 inline-flex items-center gap-1.5 rounded-xl bg-[#0071e3] hover:bg-[#0077ed] px-4 py-2 text-xs font-medium text-white transition active:scale-[0.98] cursor-pointer"
             >
-              <ArrowLeft className="h-4 w-4" />
-              <span>Back to Dashboard</span>
+              <ArrowLeft className="h-3.5 w-3.5" />
+              <span>Back to Assignments</span>
             </button>
           </div>
         </div>
@@ -64,106 +64,110 @@ export default function AdminAssignmentDetails() {
 
   return (
     <DashboardLayout>
-      <div className="mx-auto max-w-5xl space-y-6">
-        {/* Breadcrumb Navigation */}
+      <div className="mx-auto max-w-4xl space-y-4 sm:space-y-5">
+        {/* Apple Back Nav */}
         <div>
           <button
-            onClick={() => navigate("/admin")}
-            className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer"
+            onClick={() => navigate("/admin/assignments")}
+            className="inline-flex items-center gap-1 text-xs font-medium text-neutral-500 hover:text-neutral-900 dark:hover:text-white transition cursor-pointer"
           >
-            <ArrowLeft className="h-4 w-4" />
-            <span>Back to Admin Dashboard</span>
+            <ArrowLeft className="h-3.5 w-3.5" />
+            <span>Assignments</span>
           </button>
         </div>
 
-        {/* Assignment Card Header */}
-        <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 sm:p-8 shadow-sm space-y-6 transition-colors">
-          <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between border-b border-slate-100 dark:border-slate-800 pb-6">
+        {/* Apple Card Header */}
+        <div className="rounded-2xl bg-white dark:bg-[#1c1c1e] border border-black/[0.06] dark:border-white/[0.08] shadow-[0_2px_8px_rgba(0,0,0,0.03)] dark:shadow-none p-4 sm:p-6 space-y-5 transition-colors">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between border-b border-black/[0.04] dark:border-white/[0.06] pb-4">
             <div>
-              <span className="inline-block px-2.5 py-0.5 bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 text-xs font-semibold rounded-full border border-blue-200 dark:border-blue-800/60 mb-2">
-                Faculty Review View
+              <span className="text-[11px] font-medium text-neutral-400 uppercase tracking-wider">
+                Submission Oversight
               </span>
 
-              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
+              <h1 className="text-lg sm:text-xl font-bold text-neutral-900 dark:text-white tracking-tight mt-0.5">
                 {assignment.title}
               </h1>
 
-              <p className="mt-3 max-w-2xl text-sm sm:text-base leading-7 text-slate-600 dark:text-slate-400 whitespace-pre-line">
+              <p className="mt-2 max-w-2xl text-xs sm:text-sm leading-relaxed text-neutral-600 dark:text-neutral-400 whitespace-pre-line">
                 {assignment.description}
               </p>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-2.5 shrink-0">
+            <div className="shrink-0 self-start sm:self-auto">
               <a
                 href={assignment.driveLink}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 px-4 py-2.5 text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition shadow-2xs"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-black/[0.05] dark:bg-white/[0.08] hover:bg-black/[0.08] dark:hover:bg-white/[0.12] px-3 py-1.5 text-xs font-medium text-neutral-800 dark:text-neutral-200 transition active:scale-[0.98]"
               >
                 <span>Google Drive</span>
-                <ExternalLink className="h-4 w-4" />
+                <ExternalLink size={12} />
               </a>
             </div>
           </div>
 
-          {/* Quick Meta Stats */}
-          <div className="grid gap-4 sm:grid-cols-2 text-xs sm:text-sm">
-            <div className="flex items-center gap-3 p-3.5 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-100 dark:border-slate-800">
-              <CalendarDays className="h-5 w-5 text-slate-400 shrink-0" />
+          {/* Quick Meta Chips */}
+          <div className="grid gap-3 sm:grid-cols-2 text-xs">
+            <div className="flex items-center gap-2.5 p-3 bg-black/[0.02] dark:bg-white/[0.04] rounded-xl border border-black/[0.04] dark:border-white/[0.06]">
+              <CalendarDays size={15} className="text-neutral-400 shrink-0" />
               <div>
-                <p className="text-xs text-slate-500 dark:text-slate-400">Submission Due Date</p>
-                <p className="font-bold text-slate-900 dark:text-white mt-0.5">{formatDate(assignment.dueDate)}</p>
+                <p className="text-[10px] text-neutral-400">Due Date</p>
+                <p className="font-semibold text-neutral-900 dark:text-white">
+                  {formatDate(assignment.dueDate)}
+                </p>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 p-3.5 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-100 dark:border-slate-800">
-              <Users className="h-5 w-5 text-slate-400 shrink-0" />
+            <div className="flex items-center gap-2.5 p-3 bg-black/[0.02] dark:bg-white/[0.04] rounded-xl border border-black/[0.04] dark:border-white/[0.06]">
+              <Users size={15} className="text-neutral-400 shrink-0" />
               <div>
-                <p className="text-xs text-slate-500 dark:text-slate-400">Assigned Cohort</p>
-                <p className="font-bold text-slate-900 dark:text-white mt-0.5">{assignedStudents.length} Students Allocated</p>
+                <p className="text-[10px] text-neutral-400">Cohort</p>
+                <p className="font-semibold text-neutral-900 dark:text-white">
+                  {assignedStudents.length} Students Allocated
+                </p>
               </div>
             </div>
           </div>
 
           {/* Class Completion Progress Bar */}
-          <div className="border-t border-slate-100 dark:border-slate-800 pt-6">
+          <div className="border-t border-black/[0.04] dark:border-white/[0.06] pt-4">
             <div className="mb-2 flex items-center justify-between">
               <div>
-                <p className="text-sm font-bold text-slate-900 dark:text-white">
-                  Class Completion Progress
+                <p className="text-xs sm:text-sm font-semibold text-neutral-900 dark:text-white">
+                  Class Completion
                 </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                <p className="text-[11px] text-neutral-400">
                   {submittedCount} of {assignedStudents.length} students have submitted
                 </p>
               </div>
 
-              <span className="text-sm font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/50 px-2.5 py-1 rounded-full border border-blue-100 dark:border-blue-900/50">
+              <span className="text-xs font-semibold tabular-nums text-neutral-800 dark:text-neutral-200 px-2 py-0.5 rounded-md bg-black/[0.04] dark:bg-white/[0.08]">
                 {progress}%
               </span>
             </div>
 
-            <ProgressBar percentage={progress} />
+            <ProgressBar percentage={progress} showLabel={false} height="h-2" />
           </div>
         </div>
 
         {/* Student Submission Tracking Table */}
-        <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm overflow-hidden transition-colors">
-          <div className="border-b border-slate-200 dark:border-slate-800 p-6 bg-slate-50/50 dark:bg-slate-800/40 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <div className="rounded-2xl border border-black/[0.06] dark:border-white/[0.08] bg-white dark:bg-[#1c1c1e] shadow-[0_2px_8px_rgba(0,0,0,0.03)] dark:shadow-none overflow-hidden transition-colors">
+          <div className="border-b border-black/[0.04] dark:border-white/[0.06] p-4 flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">
-                Allocated Students & Live Submission Status
+              <h2 className="text-xs sm:text-sm font-semibold text-neutral-900 dark:text-white tracking-tight">
+                Student Roster
               </h2>
-              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
-                Track each student's submission status in real-time.
+              <p className="text-[11px] text-neutral-400">
+                Live submission status for this assignment
               </p>
             </div>
 
-            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-1 rounded-full self-start sm:self-auto shadow-2xs">
-              {assignedStudents.length} Students
+            <span className="text-[10px] font-medium text-neutral-500 bg-black/[0.04] dark:bg-white/[0.06] px-2 py-0.5 rounded-md">
+              {assignedStudents.length} students
             </span>
           </div>
 
-          <div className="divide-y divide-slate-100 dark:divide-slate-800">
+          <div className="divide-y divide-black/[0.03] dark:divide-white/[0.04]">
             {assignedStudents.map((student) => {
               const status =
                 assignment.submissions?.[student.id] || "pending";
@@ -171,21 +175,21 @@ export default function AdminAssignmentDetails() {
               return (
                 <div
                   key={student.id}
-                  className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-5 hover:bg-slate-50/75 dark:hover:bg-slate-800/40 transition-colors"
+                  className="flex items-center justify-between p-3.5 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="h-9 w-9 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center font-bold text-slate-700 dark:text-slate-300 text-xs">
+                  <div className="flex items-center gap-2.5">
+                    <div className="h-7 w-7 rounded-lg bg-black/[0.06] dark:bg-white/[0.08] flex items-center justify-center font-medium text-neutral-700 dark:text-neutral-300 text-xs">
                       {student.name.charAt(0)}
                     </div>
                     <div>
-                      <p className="font-semibold text-slate-900 dark:text-white text-sm">
+                      <p className="font-medium text-neutral-900 dark:text-white text-xs leading-tight">
                         {student.name}
                       </p>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">{student.email}</p>
+                      <p className="text-[10px] text-neutral-400">{student.email}</p>
                     </div>
                   </div>
 
-                  <div className="self-start sm:self-auto">
+                  <div>
                     <Badge status={status} />
                   </div>
                 </div>
