@@ -12,6 +12,7 @@ import AdminDashboard from "../pages/AdminDashboard";
 import AdminAssignments from "../pages/AdminAssignments";
 import AssignmentDetails from "../pages/AssignmentDetails";
 import AdminAssignmentDetails from "../pages/AdminAssignmentDetails";
+import Profile from "../pages/Profile";
 import ProtectedRoute from "./ProtectedRoute";
 
 export default function AppRoutes() {
@@ -19,6 +20,16 @@ export default function AppRoutes() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
+
+        {/* Universal Profile Route for Authenticated Users */}
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Student Protected Routes */}
         <Route

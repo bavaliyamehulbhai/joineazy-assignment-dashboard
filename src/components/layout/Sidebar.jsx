@@ -1,5 +1,5 @@
-import { LayoutDashboard, BookOpen, ShieldCheck, GraduationCap } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { LayoutDashboard, BookOpen, ShieldCheck, GraduationCap, User } from "lucide-react";
+import { NavLink, Link } from "react-router-dom";
 import { useApp } from "../../context/AppContext";
 
 export default function Sidebar() {
@@ -84,13 +84,17 @@ export default function Sidebar() {
         </div>
 
         {/* Compact Apple Account Card */}
-        <div className="rounded-xl bg-black/[0.03] dark:bg-white/[0.04] border border-black/[0.04] dark:border-white/[0.06] p-2.5">
+        <Link
+          to="/profile"
+          title="View Profile Settings"
+          className="rounded-xl bg-black/[0.03] dark:bg-white/[0.04] hover:bg-black/[0.06] dark:hover:bg-white/[0.08] border border-black/[0.04] dark:border-white/[0.06] p-2.5 transition block active:scale-[0.98] group cursor-pointer"
+        >
           <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-black/[0.08] dark:bg-white/[0.1] text-neutral-900 dark:text-white font-semibold text-xs">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-black/[0.08] dark:bg-white/[0.1] text-neutral-900 dark:text-white font-semibold text-xs group-hover:bg-[#0071e3] group-hover:text-white transition-colors">
               {currentUser?.name?.charAt(0) || "U"}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-medium text-neutral-900 dark:text-white truncate">
+              <p className="text-xs font-medium text-neutral-900 dark:text-white truncate group-hover:text-[#0071e3] transition-colors">
                 {currentUser?.name}
               </p>
               <p className="text-[10px] text-neutral-400 truncate">
@@ -98,7 +102,7 @@ export default function Sidebar() {
               </p>
             </div>
           </div>
-        </div>
+        </Link>
       </div>
     </aside>
   );

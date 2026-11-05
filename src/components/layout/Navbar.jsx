@@ -1,10 +1,11 @@
 import { LogOut, Sun, Moon } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useApp } from "../../context/AppContext";
 
 export default function Navbar() {
   const { currentUser, logout, theme, toggleTheme } = useApp();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     logout();
@@ -13,24 +14,33 @@ export default function Navbar() {
 
   const isAdmin = currentUser?.role === "admin";
   const userInitial = currentUser?.name ? currentUser.name.charAt(0).toUpperCase() : "U";
+  const isProfileActive = location.pathname === "/profile";
 
   return (
     <header className="sticky top-0 z-30 border-b border-black/[0.06] dark:border-white/[0.08] bg-white/85 dark:bg-[#161618]/85 backdrop-blur-2xl transition-colors">
       <div className="flex h-14 items-center justify-between px-3.5 sm:px-6 max-w-7xl mx-auto">
         {/* Brand & User Greeting */}
         <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-bold text-sm shadow-xs transition-transform active:scale-95">
+          <Link
+            to={isAdmin ? "/admin" : "/student"}
+            title="Go to Dashboard"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-bold text-sm shadow-xs transition-transform active:scale-95"
+          >
             J
-          </div>
+          </Link>
 
-          <div className="min-w-0">
-            <span className="text-sm font-bold text-neutral-900 dark:text-white tracking-tight block">
+          <Link
+            to="/profile"
+            title="View Profile Settings"
+            className="min-w-0 text-left group cursor-pointer"
+          >
+            <span className="text-sm font-bold text-neutral-900 dark:text-white tracking-tight block group-hover:text-[#0071e3] transition-colors">
               Joineazy
             </span>
-            <p className="text-[11px] text-neutral-400 dark:text-neutral-500 font-medium truncate max-w-[160px] sm:max-w-none -mt-0.5">
+            <p className="text-[11px] text-neutral-400 dark:text-neutral-500 font-medium truncate max-w-[160px] sm:max-w-none -mt-0.5 group-hover:text-neutral-600 dark:group-hover:text-neutral-300 transition-colors">
               {currentUser?.name}
             </p>
-          </div>
+          </Link>
         </div>
 
         {/* Right Action Icons: Symmetrical Apple iOS Pill Buttons */}
@@ -49,14 +59,19 @@ export default function Navbar() {
             )}
           </button>
 
-          {/* User Avatar Circle */}
+          {/* User Avatar Circle connected to /profile */}
           {currentUser && (
-            <div
-              title={`${currentUser.name} (${currentUser.role})`}
-              className="flex h-8 w-8 items-center justify-center rounded-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-bold text-xs shadow-xs select-none"
+            <Link
+              to="/profile"
+              title={`View Profile: ${currentUser.name}`}
+              className={`flex h-8 w-8 items-center justify-center rounded-full font-bold text-xs shadow-xs transition active:scale-90 cursor-pointer select-none ${
+                isProfileActive
+                  ? "bg-[#0071e3] text-white ring-2 ring-[#0071e3]/40"
+                  : "bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 hover:ring-2 hover:ring-[#0071e3]/30"
+              }`}
             >
               {userInitial}
-            </div>
+            </Link>
           )}
 
           {/* Logout Button */}

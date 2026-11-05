@@ -124,6 +124,7 @@ joineazy/
 │   │   ├── AdminDashboard.jsx           # Faculty executive overview & analytics
 │   │   ├── AssignmentDetails.jsx        # Student assignment view & 2-step submit
 │   │   ├── Login.jsx                    # Apple-style multi-user selector & quick access
+│   │   ├── Profile.jsx                  # Apple-style account settings & persona overview
 │   │   ├── StudentAssignments.jsx       # Dedicated student assignment hub & filters
 │   │   └── StudentDashboard.jsx         # Student personal progress & deadlines
 │   │
