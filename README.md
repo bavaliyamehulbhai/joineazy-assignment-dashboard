@@ -22,7 +22,7 @@ The entire system runs **100% client-side** using a robust `localStorage` engine
 
 ## 🚀 Live Demo & Repository
 
-- **Live Application:** *[Add your deployed Vercel/Netlify link here]*
+- **Live Application:** [https://joineazy-assignment-portal.netlify.app](https://joineazy-assignment-portal.netlify.app)
 - **GitHub Repository:** *[https://github.com/MehulBavaliya/joineazy-assignment-dashboard]*
 - **Video Walkthrough (Loom/Drive):** *[Add your 3–5 min video recording link here]*
 
