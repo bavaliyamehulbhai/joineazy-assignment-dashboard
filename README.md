@@ -24,7 +24,7 @@ The entire system runs **100% client-side** using a robust `localStorage` engine
 
 - **Live Application:** [https://joineazy-assignment-portal.netlify.app](https://joineazy-assignment-portal.netlify.app)
 - **GitHub Repository:** *[https://github.com/MehulBavaliya/joineazy-assignment-dashboard]*
-- **Video Walkthrough (Loom/Drive):** *[Add your 3–5 min video recording link here]*
+- **Video Walkthrough (Drive):** [https://drive.google.com/file/d/1Wv8VkfYrTwpeU5kNit83_0fWAw6ynTq3/view?usp=sharing](https://drive.google.com/file/d/1Wv8VkfYrTwpeU5kNit83_0fWAw6ynTq3/view?usp=sharing)
 
 ---
 
